@@ -1,0 +1,16 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+type: object
+description: entries for the sample sheet
+properties:
+  sample:
+    type: string
+    description: MAG name or unique identifier
+  path:
+    type: string
+    description: path to the MAG FASTA file
+
+required:
+  - sample
+  - path
+
+additionalProperties: True

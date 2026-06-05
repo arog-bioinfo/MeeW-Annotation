@@ -1,0 +1,104 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+type: object
+description: main configuration schema for the workflow
+properties:
+  sample_sheet:
+    type: string
+    description: path to sample sheet, mandatory
+    default: config/samples.tsv
+
+  prodigal:
+    type: object
+    description: parameters for Prodigal gene prediction
+    properties:
+      extra:
+        type: string
+        description: extra CLI options passed to Prodigal wrapper
+    additionalProperties: false
+
+  bakta:
+    type: object
+    description: parameters for Bakta annotation
+    properties:
+      db:
+        type: string
+        description: path to Bakta database directory
+      extra:
+        type: string
+        description: extra CLI options passed to Bakta wrapper
+    required:
+      - db
+    additionalProperties: false
+
+  gtdbtk:
+    type: object
+    description: parameters for GTDB-Tk classification
+    properties:
+      data_dir:
+        type: string
+        description: path to GTDB-Tk database directory
+      extra:
+        type: string
+        description: extra CLI options passed to GTDB-Tk wrapper
+    required:
+      - data_dir
+    additionalProperties: false
+
+  metaeuk:
+    type: object
+    description: parameters for MetaEuk gene prediction
+    properties:
+      db:
+        type: string
+        description: path to MetaEuk reference database
+      extra:
+        type: string
+        description: extra CLI options passed to MetaEuk wrapper
+    required:
+      - db
+    additionalProperties: false
+
+  recognizer:
+    type: object
+    description: parameters for reCOGnizer domain annotation
+    properties:
+      resources_dir:
+        type: string
+        description: path to reCOGnizer database directory
+      extra:
+        type: string
+        description: extra CLI options passed to reCOGnizer wrapper
+    required:
+      - resources_dir
+    additionalProperties: false
+
+  upimapi:
+    type: object
+    description: parameters for UPIMAPI functional annotation
+    properties:
+      extra:
+        type: string
+        description: extra CLI options passed to UPIMAPI wrapper
+    additionalProperties: false
+
+  threads:
+    type: object
+    description: computational resources presets
+    properties:
+      high:
+        type: integer
+      medium:
+        type: integer
+      low:
+        type: integer
+    additionalProperties: false
+
+required:
+  - sample_sheet
+  - prodigal
+  - bakta
+  - gtdbtk
+  - metaeuk
+  - recognizer
+  - upimapi
+  - threads

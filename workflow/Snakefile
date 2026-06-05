@@ -1,0 +1,37 @@
+# ----------------------------------------------------- #
+# MAG ANNOTATION WORKFLOW  
+# ----------------------------------------------------- #
+
+# load config
+# -----------------------------------------------------
+configfile: "config/config.yaml"
+
+# load rules
+# -----------------------------------------------------
+include: "rules/common.smk"
+include: "rules/process_reads.smk"
+
+# feedback messages
+# -----------------------------------------------------
+onstart:
+    print("\n--- MAG Annotation Pipeline: Started ---\n")
+
+onsuccess:
+    print("\n--- Workflow finished successfully! ---\n")
+
+onerror:
+    print("\n--- ERROR: Check the logs in the logs/ folder ---\n")
+
+# target rules
+# -----------------------------------------------------
+prok_samples = samples[samples["domain"] == "prok"].index.tolist()
+euk_samples = samples[samples["domain"] == "euk"].index.tolist()
+
+rule all:
+    default_target: True
+    input:
+        expand("results/recognizer/{sample}/reCOGnizer_results.tsv", sample=prok_samples),
+        expand("results/upimapi/{sample}/uniprotinfo.tsv", sample=prok_samples),
+        expand("results/bakta/{sample}/{sample}.faa", sample=prok_samples),
+        expand("results/metaeuk/{sample}.faa", sample=euk_samples)
+        # "results/gtdbtk"

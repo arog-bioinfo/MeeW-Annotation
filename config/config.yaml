@@ -1,0 +1,28 @@
+sample_sheet: "config/samples.tsv"
+
+prodigal:
+  extra: "-p meta -f gff"
+
+bakta:
+  db: "resources/bakta_db/db-light"
+  extra: "" 
+
+gtdbtk:
+  data_dir: "resources/gtdbtk_db"
+  extra: "" 
+
+metaeuk:
+  db: "resources/metaeuk_db/uniprot_db"
+  extra: "" 
+
+recognizer:
+  resources_dir: "resources/recognizer_db"
+  extra: ""
+
+upimapi:
+  extra: "--database swissprot"
+
+threads:
+  high: 16
+  medium: 8
+  low: 1
