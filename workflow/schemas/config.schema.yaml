@@ -76,9 +76,22 @@ properties:
     type: object
     description: parameters for UPIMAPI functional annotation
     properties:
+      db:
+        type: string
+        description: UPIMAPI built-in database name to use (for example, swissprot)
+      db_custom:
+        type: string
+        description: path to a custom UPIMAPI database FASTA; leave empty when using db
+      resources_dir:
+        type: string
+        description: path to UPIMAPI resources database directory
       extra:
         type: string
         description: extra CLI options passed to UPIMAPI wrapper
+      skip_db_check_if_exists:
+        type: boolean
+        description: automatically pass --skip-db-check when the selected UPIMAPI database FASTA already exists in the configured resources directory
+        default: true
     additionalProperties: false
 
   threads:

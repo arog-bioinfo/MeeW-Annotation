@@ -21,8 +21,9 @@ This workflow orchestrates several state-of-the-art bioinformatics tools to perf
 Detailed information about input data formats and workflow configuration parameters (such as database paths and tool-specific arguments) can be found in the [`config/README.md`](config/README.md).
 
 By default, the workflow expects:
-* A TSV sample sheet (`config/samples.tsv`) containing the paths to your `*.fasta` files.
-* A YAML configuration file (`config/config.yaml`) defining tool parameters and database locations.
+
+- A TSV sample sheet (`config/samples.tsv`) containing the paths to your `*.fasta` files.
+- A YAML configuration file (`config/config.yaml`) defining tool parameters and database locations.
 
 ## Acknowledgements / Authorship
 
@@ -33,5 +34,7 @@ This repository is now an independently maintained continuation, maintained sinc
 ### 1. Deployment options
 
 To run the workflow from the command line, change to the working directory of the project:
+
 ```bash
 cd path/to/<repo>
+```

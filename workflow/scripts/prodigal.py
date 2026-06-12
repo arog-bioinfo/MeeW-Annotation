@@ -30,10 +30,4 @@ stat_file = snakemake.output.get("stat")
 if stat_file:
     out_args += f" -s {stat_file}"
 
-shell(
-    "prodigal "
-    "-i {snakemake.input.fasta} "
-    "{out_args} "
-    "{extra} "
-    "{log}"
-)
+shell("prodigal " "-i {snakemake.input.fasta} " "{out_args} " "{extra} " "{log}")

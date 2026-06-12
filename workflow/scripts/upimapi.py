@@ -1,25 +1,40 @@
-"""Snakemake wrapper for UPIMAPI."""
-
-__author__ = "Rodolfo Brandão Dias Ferreira"
-__copyright__ = "Copyright 2026, Rodolfo Brandão"
-__email__ = "rodolfobrandao88@gmail.com"
-__license__ = "MIT"
-
 from pathlib import Path
 from snakemake.shell import shell
 
 log = snakemake.log_fmt_shell(stdout=True, stderr=True)
 extra = snakemake.params.get("extra", "")
 
-db_input = snakemake.input.get("db", "")
-db_param = snakemake.params.get("db", "")
+db = snakemake.params.get("db", "")
+db_custom = snakemake.params.get("db_custom", "")
+if db and db_custom:
+    raise ValueError(
+        "Can choose only one option. Or upimapi options (db) or custom db path (db_custom)"
+    )
 
-if db_input:
-    db_cmd = f"--database {db_input}"
-elif db_param:
-    db_cmd = f"--database {db_param}"
-else:
-    db_cmd = "" 
+resources_dir = snakemake.params.get("resources_dir")
+
+skip_db_check_if_exists = snakemake.params.get("skip_db_check_if_exists", True)
+skip_db = snakemake.params.get("skip_db", False)
+
+db2file = {
+    "uniprot": Path(resources_dir) / "uniprot.fasta",
+    "swissprot": Path(resources_dir) / "uniprot_sprot.fasta",
+    "taxids": Path(resources_dir) / "taxids_database.fasta",
+}
+
+if skip_db or (
+    skip_db_check_if_exists and (Path(db_custom).exists() or db2file[db].exists())
+):
+    skip_db = f"--skip-db-check"
+
+if db:
+    db = f"--database {db}"
+
+if db_custom:
+    db_custom = f"--database {db_custom}"
+
+if resources_dir:
+    resources_dir = f"-rd {resources_dir}"
 
 tsv_output = [out for out in snakemake.output if out.endswith(".tsv")][0]
 outdir = Path(tsv_output).parent
@@ -28,7 +43,10 @@ shell(
     "upimapi "
     "--input {snakemake.input.fasta} "
     "--output {outdir} "
-    "{db_cmd} "
+    "{db} "
+    "{db_custom} "
+    "{resources_dir} "
+    "{skip_db} "
     "--threads {snakemake.threads} "
     "{extra} "
     "{log}"

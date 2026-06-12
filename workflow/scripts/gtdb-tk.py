@@ -2,7 +2,7 @@
 
 __author__ = "Rodolfo Brandão Dias Ferreira"
 __copyright__ = "Copyright 2026, Rodolfo Brandão"
-__email__ = "rodolfobrandao88@gmail.com" 
+__email__ = "rodolfobrandao88@gmail.com"
 __license__ = "MIT"
 
 import os

@@ -5,25 +5,28 @@ prodigal:
 
 bakta:
   db: "resources/bakta_db"
-  extra: "" 
+  extra: ""
 
 gtdbtk:
   data_dir: "resources/gtdbtk_db"
-  extra: "" 
+  extra: ""
 
 metaeuk:
   db: "resources/metaeuk_db/uniprot_db"
-  extra: "" 
+  extra: ""
 
 recognizer:
   resources_dir: "resources/recognizer_db"
   extra: ""
 
 upimapi:
-  extra: "--database swissprot"
+  db: "swissprot"
+  db_custom: ""
+  resources_dir: "resources/upimapi_db"
+  extra: ""
+  skip_db_check_if_exists: true
 
 threads:
   high: 16
   medium: 8
   low: 1
-
