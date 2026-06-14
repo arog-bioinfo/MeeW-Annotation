@@ -37,11 +37,9 @@ rule recognizer_euk:
         "../envs/recognizer.yaml"
     threads: config.get("threads", {}).get("medium", 8)
     params:
-        custom_db=config.get("recognizer", {}).get("euk_custom_db", ""),
-        resources_dir=config.get("recognizer", {}).get("resources_dir", ""),
-        extra=config.get("recognizer", {}).get(
-            "euk_extra", config.get("recognizer", {}).get("extra", "")
-        ),
+        custom_db=config.get("recognizer_euk", {}).get("custom_db", ""),
+        resources_dir=config.get("recognizer_euk", {}).get("resources_dir", ""),
+        extra=config.get("recognizer_euk", {}).get("extra", ""),
     message:
         """--- Running eukaryotic reCOGnizer domain annotation for {wildcards.sample}."""
     script:

@@ -1,5 +1,11 @@
+# ====================
+# General Input
+# ====================
 sample_sheet: "config/samples.tsv"
 
+# ====================
+# Quality Filtering
+# ====================
 qa_filter:
   enabled: false
   min_completeness: 50.0
@@ -8,27 +14,40 @@ qa_filter:
   eukcc_reports: []
   missing_sample: "error"
 
+# ====================
+# Prokaryotic Annotation
+# ====================
+
+# --------------------
+# Prodigal
+# --------------------
 prodigal:
   extra: "-p meta -f gff"
 
+# --------------------
+# Bakta
+# --------------------
 bakta:
   db: "resources/bakta_db/db-light"
   extra: ""
 
+# --------------------
+# GTDB-Tk
+# --------------------
 gtdbtk:
   data_dir: "resources/gtdbtk_db"
   extra: ""
 
-metaeuk:
-  db: "resources/metaeuk_db/uniprot_db"
-  extra: ""
-
-recognizer:
+# --------------------
+# reCOGnizer Prokaryotic
+# --------------------
+recognizer_prok:
   resources_dir: "resources/recognizer_db"
   extra: ""
-  euk_custom_db: ""
-  euk_extra: ""
 
+# --------------------
+# UPIMAPI
+# --------------------
 upimapi:
   db: "swissprot"
   db_custom: ""
@@ -36,6 +55,28 @@ upimapi:
   extra: ""
   skip_db_check_if_exists: true
 
+# ====================
+# Eukaryotic Annotation
+# ====================
+
+# --------------------
+# MetaEuk
+# --------------------
+metaeuk:
+  db: "resources/metaeuk_db/uniprot_db"
+  extra: ""
+
+# --------------------
+# reCOGnizer Eukaryotic
+# --------------------
+recognizer_euk:
+  resources_dir: "resources/recognizer_db"
+  custom_db: ""
+  extra: ""
+
+# ====================
+# Computational Resources
+# ====================
 threads:
   high: 16
   medium: 8

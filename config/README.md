@@ -1,44 +1,79 @@
 # Workflow configuration
 
-The workflow processes one or more Metagenome-Assembled Genomes (MAGs) per run.
-Set these fields in `config/config.yaml`:
+The workflow processes one or more Metagenome-Assembled Genomes (MAGs) per run. Configure inputs and tool options in `config/config.yaml`.
 
-- `sample_sheet`: path to a TSV file containing the sample names and paths.
-- `qa_filter`: optional external QA filtering before annotation targets are expanded. When enabled, prokaryotic samples use CheckM2 TSV reports (`Name`, `Completeness`, `Contamination`) and eukaryotic samples use EukCC CSV reports (`bin`, `completeness`, `contamination`). Samples pass when completeness is at least `min_completeness` and contamination is at most `max_contamination`; `missing_sample` can be `error`, `keep`, or `drop`.
-- `prodigal.extra`: optional extra options string passed to the Prodigal wrapper (e.g., `-p meta -f gff`).
+## General input
+
+- `sample_sheet`: path to a TSV file containing sample names, input FASTA paths, and domains.
+
+## Sample sheet format
+
+The sample sheet is a tab-separated file. Required columns:
+
+- `sample`: unique identifier/name for the MAG or isolate.
+- `path`: path to the input genome file in FASTA format (`.fasta`, `.fna`, `.fa`).
+- `domain`: annotation path for the sample. Use `prok` for prokaryotic samples and `euk` for eukaryotic samples.
+
+The workflow dynamically processes all rows defined in this sheet.
+
+Example:
+
+```tsv
+sample	path	domain
+sample_a	data/sample_a.fna	prok
+sample_b	data/sample_b.fasta	euk
+```
+
+## Optional QA filtering
+
+- `qa_filter.enabled`: when `true`, filter samples before annotation targets are expanded.
+- `qa_filter.min_completeness`: minimum completeness required for a sample to pass.
+- `qa_filter.max_contamination`: maximum contamination allowed for a sample to pass.
+- `qa_filter.checkm2_reports`: CheckM2 TSV reports for prokaryotic samples. Reports must include `Name`, `Completeness`, and `Contamination`.
+- `qa_filter.eukcc_reports`: EukCC CSV reports for eukaryotic samples. Reports must include `bin`, `completeness`, and `contamination`.
+- `qa_filter.missing_sample`: behavior when a sample is absent from QA reports. Supported values are `error`, `keep`, and `drop`.
+
+## Prokaryotic annotation path
+
+- `prodigal.extra`: optional extra options string passed to the Prodigal wrapper.
 - `bakta.db`: path to the Bakta database directory.
 - `bakta.extra`: optional extra options string passed to the Bakta wrapper.
 - `gtdbtk.data_dir`: path to the GTDB-Tk reference database directory.
 - `gtdbtk.extra`: optional extra options string passed to the GTDB-Tk wrapper.
-- `metaeuk.db`: path to the MetaEuk reference database (UniProt database).
-- `metaeuk.extra`: optional extra options string passed to the MetaEuk wrapper.
-- `recognizer.resources_dir`: path to the reCOGnizer resources database directory.
-- `recognizer.extra`: optional extra options string passed to the reCOGnizer wrapper.
-- `recognizer.euk_custom_db`: path to a KOG/custom database for eukaryotic reCOGnizer. Leave empty to disable a custom eukaryotic database.
-- `recognizer.euk_extra`: optional extra options string passed to eukaryotic reCOGnizer.
-- `upimapi.db`: UPIMAPI built-in database name to use (for example, `swissprot`). Leave empty when using `upimapi.db_custom`.
+- `recognizer_prok.resources_dir`: path to the prokaryotic reCOGnizer resources database directory.
+- `recognizer_prok.extra`: optional extra options string passed to the prokaryotic reCOGnizer wrapper.
+- `upimapi.db`: UPIMAPI built-in database name to use, for example `swissprot`. Leave empty when using `upimapi.db_custom`.
 - `upimapi.db_custom`: path to a custom UPIMAPI database FASTA. Leave empty when using `upimapi.db`.
 - `upimapi.resources_dir`: path to the UPIMAPI resources database directory.
 - `upimapi.extra`: optional extra options string passed to the UPIMAPI wrapper.
-- `upimapi.skip_db_check_if_exists`: when `true` (default), automatically add `--skip-db-check` only if the selected UPIMAPI database FASTA already exists in `upimapi.resources_dir` or `upimapi.db_custom` exists.
-- `threads`: dictionary containing computational resource presets (`high`, `medium`, `low`).
+- `upimapi.skip_db_check_if_exists`: when `true`, automatically add `--skip-db-check` only if the selected UPIMAPI database FASTA already exists in `upimapi.resources_dir` or `upimapi.db_custom` exists.
 
-## Sample sheet format (TSV)
+## Eukaryotic annotation path
 
-Required columns:
+- `metaeuk.db`: path to the MetaEuk reference database, such as a UniProt database.
+- `metaeuk.extra`: optional extra options string passed to the MetaEuk wrapper.
+- `recognizer_euk.resources_dir`: path to the eukaryotic reCOGnizer resources database directory.
+- `recognizer_euk.custom_db`: path to a KOG/custom database for eukaryotic reCOGnizer. Leave empty to disable a custom eukaryotic database.
+- `recognizer_euk.extra`: optional extra options string passed to the eukaryotic reCOGnizer wrapper.
 
-- `sample`: unique identifier/name for the MAG or isolate.
-- `path`: path to the input genome file in FASTA format (`.fasta`, `.fna`, `.fa`).
+## Thread presets
 
-The workflow will dynamically process all rows defined in this sheet.
+- `threads`: dictionary containing computational resource presets.
+- `threads.high`: thread count for high-resource steps.
+- `threads.medium`: thread count for medium-resource steps.
+- `threads.low`: thread count for low-resource steps.
 
-## Example files
-
-### `config/config.yaml`:
+## Example config
 
 ```yaml
-sample_sheet: config/samples.tsv
+# ====================
+# General Input
+# ====================
+sample_sheet: "config/samples.tsv"
 
+# ====================
+# Quality Filtering
+# ====================
 qa_filter:
   enabled: false
   min_completeness: 50.0
@@ -47,34 +82,69 @@ qa_filter:
   eukcc_reports: []
   missing_sample: "error"
 
+# ====================
+# Prokaryotic Annotation
+# ====================
+
+# --------------------
+# Prodigal
+# --------------------
 prodigal:
   extra: "-p meta -f gff"
 
+# --------------------
+# Bakta
+# --------------------
 bakta:
-  db: "resources/bakta_db"
+  db: "resources/bakta_db/db-light"
   extra: ""
 
+# --------------------
+# GTDB-Tk
+# --------------------
 gtdbtk:
   data_dir: "resources/gtdbtk_db"
   extra: ""
 
-metaeuk:
-  db: "resources/metaeuk_db/uniprot_db"
-  extra: "--e 0.0001"
-
-recognizer:
+# --------------------
+# reCOGnizer Prokaryotic
+# --------------------
+recognizer_prok:
   resources_dir: "resources/recognizer_db"
-  extra: "--evalue 0.001"
-  euk_custom_db: ""
-  euk_extra: ""
+  extra: ""
 
+# --------------------
+# UPIMAPI
+# --------------------
 upimapi:
   db: "swissprot"
   db_custom: ""
   resources_dir: "resources/upimapi_db"
-  extra: "--evalue 1e-5"
+  extra: ""
   skip_db_check_if_exists: true
 
+# ====================
+# Eukaryotic Annotation
+# ====================
+
+# --------------------
+# MetaEuk
+# --------------------
+metaeuk:
+  db: "resources/metaeuk_db/uniprot_db"
+  extra: ""
+
+# --------------------
+# reCOGnizer Eukaryotic
+# --------------------
+recognizer_euk:
+  resources_dir: "resources/recognizer_db"
+  custom_db: ""
+  extra: ""
+
+# ====================
+# Computational Resources
+# ====================
 threads:
   high: 16
   medium: 8

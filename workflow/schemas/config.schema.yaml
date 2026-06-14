@@ -96,22 +96,33 @@ properties:
       - db
     additionalProperties: false
 
-  recognizer:
+  recognizer_prok:
     type: object
-    description: parameters for reCOGnizer domain annotation
+    description: parameters for prokaryotic reCOGnizer domain annotation
     properties:
       resources_dir:
         type: string
-        description: path to reCOGnizer database directory
+        description: path to prokaryotic reCOGnizer database directory
       extra:
         type: string
-        description: extra CLI options passed to reCOGnizer wrapper
-      euk_custom_db:
+        description: extra CLI options passed to prokaryotic reCOGnizer wrapper
+    required:
+      - resources_dir
+    additionalProperties: false
+
+  recognizer_euk:
+    type: object
+    description: parameters for eukaryotic reCOGnizer domain annotation
+    properties:
+      resources_dir:
+        type: string
+        description: path to eukaryotic reCOGnizer database directory
+      custom_db:
         type: string
         description: path to KOG/custom database for eukaryotic reCOGnizer; empty disables custom DB
-      euk_extra:
+      extra:
         type: string
-        description: extra CLI options for eukaryotic reCOGnizer
+        description: extra CLI options passed to eukaryotic reCOGnizer wrapper
     required:
       - resources_dir
     additionalProperties: false
@@ -157,6 +168,7 @@ required:
   - bakta
   - gtdbtk
   - metaeuk
-  - recognizer
+  - recognizer_prok
+  - recognizer_euk
   - upimapi
   - threads

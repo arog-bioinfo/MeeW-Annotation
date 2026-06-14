@@ -38,8 +38,8 @@ rule recognizer_prok:
         "../envs/recognizer.yaml"
     threads: config.get("threads", {}).get("medium", 8)
     params:
-        resources_dir=config.get("recognizer", {}).get("resources_dir", ""),
-        extra=config.get("recognizer", {}).get("extra", ""),
+        resources_dir=config.get("recognizer_prok", {}).get("resources_dir", ""),
+        extra=config.get("recognizer_prok", {}).get("extra", ""),
     message:
         """--- Running prokaryotic reCOGnizer domain annotation for {wildcards.sample}."""
     script:
