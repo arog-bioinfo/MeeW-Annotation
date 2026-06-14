@@ -4,6 +4,7 @@ The workflow processes one or more Metagenome-Assembled Genomes (MAGs) per run.
 Set these fields in `config/config.yaml`:
 
 - `sample_sheet`: path to a TSV file containing the sample names and paths.
+- `qa_filter`: optional external QA filtering before annotation targets are expanded. When enabled, prokaryotic samples use CheckM2 TSV reports (`Name`, `Completeness`, `Contamination`) and eukaryotic samples use EukCC CSV reports (`bin`, `completeness`, `contamination`). Samples pass when completeness is at least `min_completeness` and contamination is at most `max_contamination`; `missing_sample` can be `error`, `keep`, or `drop`.
 - `prodigal.extra`: optional extra options string passed to the Prodigal wrapper (e.g., `-p meta -f gff`).
 - `bakta.db`: path to the Bakta database directory.
 - `bakta.extra`: optional extra options string passed to the Bakta wrapper.
@@ -13,6 +14,8 @@ Set these fields in `config/config.yaml`:
 - `metaeuk.extra`: optional extra options string passed to the MetaEuk wrapper.
 - `recognizer.resources_dir`: path to the reCOGnizer resources database directory.
 - `recognizer.extra`: optional extra options string passed to the reCOGnizer wrapper.
+- `recognizer.euk_custom_db`: path to a KOG/custom database for eukaryotic reCOGnizer. Leave empty to disable a custom eukaryotic database.
+- `recognizer.euk_extra`: optional extra options string passed to eukaryotic reCOGnizer.
 - `upimapi.db`: UPIMAPI built-in database name to use (for example, `swissprot`). Leave empty when using `upimapi.db_custom`.
 - `upimapi.db_custom`: path to a custom UPIMAPI database FASTA. Leave empty when using `upimapi.db`.
 - `upimapi.resources_dir`: path to the UPIMAPI resources database directory.
@@ -36,6 +39,14 @@ The workflow will dynamically process all rows defined in this sheet.
 ```yaml
 sample_sheet: config/samples.tsv
 
+qa_filter:
+  enabled: false
+  min_completeness: 50.0
+  max_contamination: 10.0
+  checkm2_reports: []
+  eukcc_reports: []
+  missing_sample: "error"
+
 prodigal:
   extra: "-p meta -f gff"
 
@@ -54,6 +65,8 @@ metaeuk:
 recognizer:
   resources_dir: "resources/recognizer_db"
   extra: "--evalue 0.001"
+  euk_custom_db: ""
+  euk_extra: ""
 
 upimapi:
   db: "swissprot"

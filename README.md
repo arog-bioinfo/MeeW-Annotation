@@ -27,7 +27,7 @@ By default, the workflow expects:
 
 ## Acknowledgements / Authorship
 
-This annotation workflow was originally authored by [@rodolfobrandao8](https://github.com/rodolfobrandao8) as a first-year project component developed under supervision.
+This annotation workflow was originally authored by [@rodolfobrandao8](https://github.com/rodolfobrandao8) as a first-year project component developed under the supervision of [@arog-bioinfo](https://github.com/arog-bioinfo).
 
 This repository is now an independently maintained continuation, maintained since 2026-06-12 by [@arog-bioinfo](https://github.com/arog-bioinfo), as part of second-year master's thesis work.
 

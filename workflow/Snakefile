@@ -11,7 +11,8 @@ configfile: "config/config.yaml"
 # load rules
 # -----------------------------------------------------
 include: "rules/common.smk"
-include: "rules/process_reads.smk"
+include: "rules/prok.smk"
+include: "rules/euk.smk"
 
 
 # feedback messages
@@ -37,10 +38,14 @@ euk_samples = samples[samples["domain"] == "euk"].index.tolist()
 rule all:
     default_target: True
     input:
+        expand("results/bakta/{sample}/{sample}.faa", sample=prok_samples),
         expand(
-            "results/recognizer/{sample}/reCOGnizer_results.tsv", sample=prok_samples
+            "results/recognizer/prok/{sample}/reCOGnizer_results.tsv",
+            sample=prok_samples,
         ),
         expand("results/upimapi/{sample}/uniprotinfo.tsv", sample=prok_samples),
-        expand("results/bakta/{sample}/{sample}.faa", sample=prok_samples),
-        expand("results/metaeuk/{sample}.faa", sample=euk_samples),
+        expand(
+            "results/recognizer/euk/{sample}/reCOGnizer_results.tsv",
+            sample=euk_samples,
+        ),
         # "results/gtdbtk"

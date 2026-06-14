@@ -7,6 +7,44 @@ properties:
     description: path to sample sheet, mandatory
     default: config/samples.tsv
 
+  qa_filter:
+    type: object
+    description: external CheckM2/EukCC QA filtering applied before target expansion
+    properties:
+      enabled:
+        type: boolean
+        description: enable filtering by external QA reports
+        default: false
+      min_completeness:
+        type: number
+        description: minimum completeness required to keep a sample
+        default: 50.0
+      max_contamination:
+        type: number
+        description: maximum contamination allowed to keep a sample
+        default: 10.0
+      checkm2_reports:
+        type: array
+        description: CheckM2 TSV report paths for prokaryotic samples
+        items:
+          type: string
+        default: []
+      eukcc_reports:
+        type: array
+        description: EukCC CSV report paths for eukaryotic samples
+        items:
+          type: string
+        default: []
+      missing_sample:
+        type: string
+        description: behavior when a sample is missing from its QA report
+        enum:
+          - error
+          - keep
+          - drop
+        default: error
+    additionalProperties: false
+
   prodigal:
     type: object
     description: parameters for Prodigal gene prediction
@@ -68,6 +106,12 @@ properties:
       extra:
         type: string
         description: extra CLI options passed to reCOGnizer wrapper
+      euk_custom_db:
+        type: string
+        description: path to KOG/custom database for eukaryotic reCOGnizer; empty disables custom DB
+      euk_extra:
+        type: string
+        description: extra CLI options for eukaryotic reCOGnizer
     required:
       - resources_dir
     additionalProperties: false
@@ -108,6 +152,7 @@ properties:
 
 required:
   - sample_sheet
+  - qa_filter
   - prodigal
   - bakta
   - gtdbtk

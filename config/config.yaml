@@ -1,5 +1,13 @@
 sample_sheet: "config/samples.tsv"
 
+qa_filter:
+  enabled: false
+  min_completeness: 50.0
+  max_contamination: 10.0
+  checkm2_reports: []
+  eukcc_reports: []
+  missing_sample: "error"
+
 prodigal:
   extra: "-p meta -f gff"
 
@@ -18,6 +26,8 @@ metaeuk:
 recognizer:
   resources_dir: "resources/recognizer_db"
   extra: ""
+  euk_custom_db: ""
+  euk_extra: ""
 
 upimapi:
   db: "swissprot"
