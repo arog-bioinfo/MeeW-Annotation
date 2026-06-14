@@ -8,9 +8,16 @@ properties:
   path:
     type: string
     description: path to the MAG FASTA file
+  domain:
+    type: string
+    description: sample domain controlling annotation path
+    enum:
+      - prok
+      - euk
 
 required:
   - sample
   - path
+  - domain
 
 additionalProperties: True
