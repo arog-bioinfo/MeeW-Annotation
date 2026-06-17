@@ -1,10 +1,3 @@
-"""Snakemake wrapper for Prodigal."""
-
-__author__ = "Rodolfo Brandão Dias Ferreira"
-__copyright__ = "Copyright 2026, Rodolfo Brandão"
-__email__ = "rodolfobrandao88@gmail.com"
-__license__ = "MIT"
-
 from snakemake.shell import shell
 
 log = snakemake.log_fmt_shell(stdout=True, stderr=True)

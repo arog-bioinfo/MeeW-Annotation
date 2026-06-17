@@ -14,6 +14,9 @@ samples = (
     .set_index("sample", drop=False)
     .sort_index()
 )
+if "genome_type" not in samples.columns:
+    samples["genome_type"] = "mag"
+samples["genome_type"] = samples["genome_type"].fillna("mag")
 
 
 # validate sample sheet and config file

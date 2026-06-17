@@ -127,6 +127,80 @@ properties:
       - resources_dir
     additionalProperties: false
 
+  funannotate2:
+    type: object
+    description: parameters for Funannotate2 eukaryotic isolate annotation
+    properties:
+      enabled:
+        type: boolean
+        description: enable Funannotate2 targets for eukaryotic isolate genomes
+        default: true
+      db_dir:
+        type: string
+        description: path to the Funannotate2 database directory
+      install_db:
+        type: boolean
+        description: install missing Funannotate2 databases during real workflow execution
+        default: true
+      databases:
+        type: array
+        description: Funannotate2 database names to install when db_dir is missing
+        items:
+          type: string
+        default:
+          - all
+      extra_install:
+        type:
+          - string
+          - "null"
+        description: extra CLI options passed to Funannotate2 install
+      species:
+        type:
+          - string
+          - "null"
+        description: species name passed to Funannotate2 when provided
+      strain:
+        type:
+          - string
+          - "null"
+        description: strain name passed to Funannotate2 when provided
+      params:
+        type:
+          - string
+          - "null"
+        description: Funannotate2 parameters file passed to predict when provided
+      pretrained:
+        type:
+          - string
+          - "null"
+        description: Funannotate2 pretrained parameters passed to predict when provided
+      extra_clean:
+        type:
+          - string
+          - "null"
+        description: extra CLI options passed to Funannotate2 clean
+      extra_train:
+        type:
+          - string
+          - "null"
+        description: extra CLI options passed to Funannotate2 train
+      extra_predict:
+        type:
+          - string
+          - "null"
+        description: extra CLI options passed to Funannotate2 predict
+      extra_annotate:
+        type:
+          - string
+          - "null"
+        description: extra CLI options passed to Funannotate2 annotate
+    required:
+      - enabled
+      - db_dir
+      - install_db
+      - databases
+    additionalProperties: false
+
   upimapi:
     type: object
     description: parameters for UPIMAPI functional annotation
@@ -170,5 +244,6 @@ required:
   - metaeuk
   - recognizer_prok
   - recognizer_euk
+  - funannotate2
   - upimapi
   - threads

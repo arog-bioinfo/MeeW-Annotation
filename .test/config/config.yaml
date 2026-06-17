@@ -74,6 +74,25 @@ recognizer_euk:
   custom_db: ""
   extra: ""
 
+# --------------------
+# Funannotate2
+# --------------------
+funannotate2:
+  enabled: true
+  db_dir: "/home/argomes/resources/funannotate2_db"
+  install_db: true
+  databases:
+    - all
+  extra_install: ""
+  species: ""
+  strain: ""
+  params: ""
+  pretrained: ""
+  extra_clean: ""
+  extra_train: ""
+  extra_predict: ""
+  extra_annotate: ""
+
 # ====================
 # Computational Resources
 # ====================

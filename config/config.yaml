@@ -28,21 +28,21 @@ prodigal:
 # Bakta
 # --------------------
 bakta:
-  db: "resources/bakta_db/db-light"
+  db: "/home/argomes/resources/bakta_db/db"
   extra: ""
 
 # --------------------
 # GTDB-Tk
 # --------------------
 gtdbtk:
-  data_dir: "resources/gtdbtk_db"
+  data_dir: ""
   extra: ""
 
 # --------------------
 # reCOGnizer Prokaryotic
 # --------------------
 recognizer_prok:
-  resources_dir: "resources/recognizer_db"
+  resources_dir: "/home/argomes/resources/recognizer_db"
   extra: ""
 
 # --------------------
@@ -51,7 +51,7 @@ recognizer_prok:
 upimapi:
   db: "swissprot"
   db_custom: ""
-  resources_dir: "resources/upimapi_db"
+  resources_dir: "/home/argomes/resources/upimapi_db"
   extra: ""
   skip_db_check_if_exists: true
 
@@ -63,16 +63,35 @@ upimapi:
 # MetaEuk
 # --------------------
 metaeuk:
-  db: "resources/metaeuk_db/uniprot_db"
+  db: "/home/argomes/resources/metaeuk_db/uniprot_db"
   extra: ""
 
 # --------------------
 # reCOGnizer Eukaryotic
 # --------------------
 recognizer_euk:
-  resources_dir: "resources/recognizer_db"
+  resources_dir: "/home/argomes/resources/recognizer_db"
   custom_db: ""
   extra: ""
+
+# --------------------
+# Funannotate2
+# --------------------
+funannotate2:
+  enabled: true
+  db_dir: "/home/argomes/resources/funannotate2_db"
+  install_db: true
+  databases:
+    - all
+  extra_install: ""
+  species: ""
+  strain: ""
+  params: ""
+  pretrained: ""
+  extra_clean: ""
+  extra_train: ""
+  extra_predict: ""
+  extra_annotate: ""
 
 # ====================
 # Computational Resources
