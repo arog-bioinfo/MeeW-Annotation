@@ -10,6 +10,7 @@ if db_path:
     os.environ["GTDBTK_DATA_PATH"] = db_path
 
 out_dir = Path(snakemake.output[0]).parent
+out_dir.mkdir(parents=True, exist_ok=True)
 
 extension = snakemake.params.get("extension", "fasta")
 

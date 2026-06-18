@@ -72,14 +72,29 @@ properties:
     type: object
     description: parameters for GTDB-Tk classification
     properties:
+      enabled:
+        type: boolean
+        description: enable optional GTDB-Tk classification for prokaryotic genomes only
+        default: false
       data_dir:
         type: string
         description: path to GTDB-Tk database directory
       extra:
         type: string
         description: extra CLI options passed to GTDB-Tk wrapper
-    required:
-      - data_dir
+    allOf:
+      - if:
+          required:
+            - enabled
+          properties:
+            enabled:
+              const: true
+        then:
+          required:
+            - data_dir
+          properties:
+            data_dir:
+              minLength: 1
     additionalProperties: false
 
   metaeuk:
@@ -240,7 +255,6 @@ required:
   - qa_filter
   - prodigal
   - bakta
-  - gtdbtk
   - metaeuk
   - recognizer_prok
   - recognizer_euk

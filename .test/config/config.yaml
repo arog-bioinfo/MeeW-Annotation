@@ -35,6 +35,7 @@ bakta:
 # GTDB-Tk
 # --------------------
 gtdbtk:
+  enabled: false
   data_dir: "resources/gtdbtk_db"
   extra: ""
 

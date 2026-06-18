@@ -43,7 +43,8 @@ fungal_isolate	data/fungal_isolate.fasta	euk	isolate
 - `prodigal.extra`: optional extra options string passed to the Prodigal wrapper.
 - `bakta.db`: path to the Bakta database directory.
 - `bakta.extra`: optional extra options string passed to the Bakta wrapper.
-- `gtdbtk.data_dir`: path to the GTDB-Tk reference database directory.
+- `gtdbtk.enabled`: when `true`, run optional GTDB-Tk classification for prokaryotic genomes only. Eukaryotic samples are not staged or classified.
+- `gtdbtk.data_dir`: path to the GTDB-Tk reference database directory. The recommended path is `/home/argomes/resources/gtdbtk_db`; the database is not downloaded automatically and this path is only required when `gtdbtk.enabled` is `true`.
 - `gtdbtk.extra`: optional extra options string passed to the GTDB-Tk wrapper.
 - `recognizer_prok.resources_dir`: path to the prokaryotic reCOGnizer resources database directory.
 - `recognizer_prok.extra`: optional extra options string passed to the prokaryotic reCOGnizer wrapper.
@@ -115,7 +116,8 @@ bakta:
 # GTDB-Tk
 # --------------------
 gtdbtk:
-  data_dir: "resources/gtdbtk_db"
+  enabled: false
+  data_dir: "/home/argomes/resources/gtdbtk_db"
   extra: ""
 
 # --------------------

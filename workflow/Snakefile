@@ -1,9 +1,10 @@
-# ----------------------------------------------------- #
-# MAG ANNOTATION WORKFLOW
-# ----------------------------------------------------- #
+# Main entrypoint of the workflow.
+# Please follow the best practices:
+# https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html,
+# in particular regarding the standardized folder structure mentioned there.
 
 
-# load config
+# load configuration
 # -----------------------------------------------------
 configfile: "config/config.yaml"
 
@@ -13,50 +14,26 @@ configfile: "config/config.yaml"
 include: "rules/common.smk"
 include: "rules/prok.smk"
 include: "rules/euk.smk"
+include: "rules/annotation_targets.smk"
 
 
-# feedback messages
+# optional messages, log and error handling
 # -----------------------------------------------------
 onstart:
-    print("\n--- MAG Annotation Pipeline: Started ---\n")
+    print("\n--- Analysis started ---\n")
 
 
 onsuccess:
-    print("\n--- Workflow finished successfully! ---\n")
+    print("\n--- Workflow finished! ---\n")
 
 
 onerror:
-    print("\n--- ERROR: Check the logs in the logs/ folder ---\n")
+    print("\n--- An error occurred! ---\n")
 
 
 # target rules
 # -----------------------------------------------------
-prok_samples = samples[samples["domain"] == "prok"].index.tolist()
-euk_mag_samples = samples[
-    (samples["domain"] == "euk") & (samples["genome_type"] == "mag")
-].index.tolist()
-euk_isolate_samples = samples[
-    (samples["domain"] == "euk") & (samples["genome_type"] == "isolate")
-].index.tolist()
-if not config.get("funannotate2", {}).get("enabled", True):
-    euk_isolate_samples = []
-
-
 rule all:
     default_target: True
     input:
-        expand("results/bakta/{sample}/{sample}.faa", sample=prok_samples),
-        expand(
-            "results/recognizer/prok/{sample}/reCOGnizer_results.tsv",
-            sample=prok_samples,
-        ),
-        expand("results/upimapi/{sample}/uniprotinfo.tsv", sample=prok_samples),
-        expand(
-            "results/recognizer/euk/{sample}/reCOGnizer_results.tsv",
-            sample=euk_mag_samples,
-        ),
-        expand(
-            "results/funannotate2/{sample}/annotate.done",
-            sample=euk_isolate_samples,
-        ),
-        # "results/gtdbtk"
+        FINAL_TARGETS,

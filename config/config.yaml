@@ -35,7 +35,8 @@ bakta:
 # GTDB-Tk
 # --------------------
 gtdbtk:
-  data_dir: ""
+  enabled: false
+  data_dir: "/home/argomes/resources/gtdbtk_db"
   extra: ""
 
 # --------------------

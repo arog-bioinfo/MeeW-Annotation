@@ -3,6 +3,10 @@
 # ----------------------------------------------------- #
 
 
+def prokaryotic_gtdbtk_inputs(wildcards):
+    return samples.loc[samples["domain"] == "prok", "path"].tolist()
+
+
 # Predict protein-coding genes using Prodigal
 # -----------------------------------------------------
 rule prodigal:
@@ -96,3 +100,48 @@ rule bakta:
         """--- Running Bakta comprehensive annotation for {wildcards.sample}."""
     script:
         "../scripts/bakta.py"
+
+
+# Stage only prokaryotic genomes for GTDB-Tk batch classification
+# -----------------------------------------------------
+rule stage_gtdbtk_genomes:
+    input:
+        prokaryotic_gtdbtk_inputs,
+    output:
+        genomes=directory("results/gtdbtk_genomes"),
+    message:
+        """--- Staging prokaryotic genomes for GTDB-Tk."""
+    run:
+        import shutil
+        from pathlib import Path
+
+        genomes = Path(output.genomes)
+        if genomes.exists():
+            shutil.rmtree(genomes)
+        genomes.mkdir(parents=True)
+        for _, row in samples[samples["domain"] == "prok"].iterrows():
+            source = Path(row["path"])
+            target = genomes / f"{row['sample']}.fasta"
+            target.symlink_to(source.resolve())
+
+
+# Optional prokaryotic genome classification using GTDB-Tk
+# -----------------------------------------------------
+rule gtdbtk:
+    input:
+        genomes=rules.stage_gtdbtk_genomes.output.genomes,
+    output:
+        done=touch("results/gtdbtk/gtdbtk.done"),
+    log:
+        "results/gtdbtk/gtdbtk.log",
+    conda:
+        "../envs/gtdb-tk.yaml"
+    threads: config.get("threads", {}).get("high", 16)
+    params:
+        db_path=config.get("gtdbtk", {}).get("data_dir", ""),
+        extension="fasta",
+        extra=config.get("gtdbtk", {}).get("extra", ""),
+    message:
+        """--- Running GTDB-Tk classification for prokaryotic genomes."""
+    script:
+        "../scripts/gtdb-tk.py"

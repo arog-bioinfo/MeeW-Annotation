@@ -14,7 +14,7 @@ This workflow orchestrates several state-of-the-art bioinformatics tools to perf
 2. **Comprehensive Genome Annotation:** Rapid and standard-compliant annotation with `Bakta`.
 3. **Functional Domain Annotation:** Identify COG/Pfam/CDD domains using `reCOGnizer`.
 4. **Protein Mapping:** Functional annotation via UniProt databases using `UPIMAPI`.
-5. **Taxonomic Classification:** Robust taxonomic assignment for all MAGs using `GTDB-Tk`.
+5. **Taxonomic Classification:** Optional prokaryotic-only taxonomic assignment using `GTDB-Tk`.
 
 ## Configuration & Input Data
 
