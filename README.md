@@ -8,7 +8,7 @@ A best-practice Snakemake workflow for the **Annotation of Metagenome-Assembled 
 
 ## Pipeline Overview
 
-This workflow orchestrates several state-of-the-art bioinformatics tools to perform structural and functional annotation, as well as taxonomic classification. It takes assembled genomes (MAGs or isolates) in `*.fasta` or `*.fna` format as input. FASTA inputs may be produced by upstream `MAW-Assembly` or `MAW-Binning` workflows, or supplied from compatible external sources.
+This workflow orchestrates several state-of-the-art bioinformatics tools to perform structural and functional annotation, as well as taxonomic classification. It takes assembled genomes (MAGs or isolates) in `*.fasta` or `*.fna` format as input. FASTA inputs may be produced by upstream `MeeW-Assembly` or `MeeW-Binning` workflows, or supplied from compatible external sources.
 
 1. **Structural Annotation / Gene Calling:** Predict protein-coding genes using `Prodigal` (prokaryotes) and `MetaEuk` (eukaryotes).
 2. **Comprehensive Genome Annotation:** Rapid and standard-compliant annotation with `Bakta`.
