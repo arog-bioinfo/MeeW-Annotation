@@ -11,7 +11,7 @@ def prokaryotic_gtdbtk_inputs(wildcards):
 # -----------------------------------------------------
 rule prodigal:
     input:
-        fasta="data/{sample}.fasta",
+        fasta=sample_fasta,
     output:
         out="results/prodigal/{sample}.gff",
         faa="results/prodigal/{sample}.faa",
@@ -83,7 +83,7 @@ rule upimapi:
 # -----------------------------------------------------
 rule bakta:
     input:
-        fasta="data/{sample}.fasta",
+        fasta=sample_fasta,
     output:
         outdir=directory("results/bakta/{sample}"),
         gff="results/bakta/{sample}/{sample}.gff3",

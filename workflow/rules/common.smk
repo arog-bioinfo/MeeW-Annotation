@@ -25,3 +25,7 @@ validate(config, schema="../schemas/config.schema.yaml")
 
 # filter samples by external QA reports before expanding annotation targets
 samples = filter_samples_by_domain(samples, config.get("qa_filter", {}))
+
+
+def sample_fasta(wildcards):
+    return samples.loc[wildcards.sample, "path"]

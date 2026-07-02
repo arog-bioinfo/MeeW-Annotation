@@ -7,7 +7,7 @@
 # -----------------------------------------------------
 rule metaeuk:
     input:
-        fasta="data/{sample}.fasta",
+        fasta=sample_fasta,
     output:
         proteins="results/metaeuk/{sample}.faa",
     log:
@@ -74,7 +74,7 @@ rule funannotate2_db:
 rule funannotate2_clean:
     input:
         db=rules.funannotate2_db.output.done,
-        fasta="data/{sample}.fasta",
+        fasta=sample_fasta,
     output:
         outdir=directory("results/funannotate2/{sample}/clean"),
         cleaned_fasta="results/funannotate2/{sample}/clean/cleaned.fasta",

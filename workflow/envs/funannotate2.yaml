@@ -5,3 +5,5 @@ channels:
 dependencies:
   - funannotate2=26.6.9
   - minimap2
+  - perl-hash-merge
+  - perl-mce
