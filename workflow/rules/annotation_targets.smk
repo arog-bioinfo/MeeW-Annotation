@@ -33,4 +33,5 @@ FINAL_TARGETS = (
         sample=euk_isolate_samples,
     )
     + gtdbtk_targets
+    + ["results/stage_sheets/annotation_to_metabolic_modeling.tsv"]
 )

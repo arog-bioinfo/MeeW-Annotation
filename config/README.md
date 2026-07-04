@@ -20,6 +20,10 @@ Optional columns:
 
 The workflow dynamically processes all rows defined in this sheet.
 
+## Metabolic Modeling handoff
+
+The final workflow targets include `results/stage_sheets/annotation_to_metabolic_modeling.tsv` for downstream MeeW Metabolic Modeling. This Annotation-owned TSV has exactly two columns, `mag` and `path`, and contains one row per prokaryotic MAG/bin (`domain: prok`) only. Each `path` value is an absolute path to the corresponding Bakta protein FASTA output at `results/bakta/{sample}/{sample}.faa`. Eukaryotic samples are deliberately excluded because the current Metabolic Modeling workflow is prokaryotic-only.
+
 Example:
 
 ```tsv

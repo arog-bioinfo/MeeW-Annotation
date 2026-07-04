@@ -15,6 +15,7 @@ include: "rules/common.smk"
 include: "rules/prok.smk"
 include: "rules/euk.smk"
 include: "rules/annotation_targets.smk"
+include: "rules/stage_sheets.smk"
 
 
 # optional messages, log and error handling

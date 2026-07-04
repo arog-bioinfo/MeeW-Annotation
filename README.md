@@ -16,6 +16,8 @@ This workflow orchestrates several state-of-the-art bioinformatics tools to perf
 4. **Protein Mapping:** Functional annotation via UniProt databases using `UPIMAPI`.
 5. **Taxonomic Classification:** Optional prokaryotic-only taxonomic assignment using `GTDB-Tk`.
 
+The workflow also writes an Annotation-owned handoff sheet for downstream Metabolic Modeling at `results/stage_sheets/annotation_to_metabolic_modeling.tsv`. This TSV contains one row per prokaryotic MAG/bin only, with columns `mag` and `path`, where `path` is the absolute path to the Bakta protein FASTA output (`results/bakta/{sample}/{sample}.faa`). Eukaryotic bins are not included in this Metabolic Modeling handoff.
+
 ## Configuration & Input Data
 
 Detailed information about input data formats and workflow configuration parameters (such as database paths and tool-specific arguments) can be found in the [`config/README.md`](config/README.md).
