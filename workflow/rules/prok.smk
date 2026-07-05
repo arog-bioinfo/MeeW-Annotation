@@ -13,11 +13,11 @@ rule prodigal:
     input:
         fasta=sample_fasta,
     output:
-        out="results/prodigal/{sample}.gff",
-        faa="results/prodigal/{sample}.faa",
-        fna="results/prodigal/{sample}.fna",
+        out="<results>/prodigal/{sample}.gff",
+        faa="<results>/prodigal/{sample}.faa",
+        fna="<results>/prodigal/{sample}.fna",
     log:
-        "results/prodigal/{sample}.log",
+        "<results>/prodigal/{sample}.log",
     conda:
         "../envs/prodigal.yaml"
     threads: config.get("threads", {}).get("low", 1)
@@ -35,9 +35,9 @@ rule recognizer_prok:
     input:
         fasta=rules.prodigal.output.faa,
     output:
-        tsv="results/recognizer/prok/{sample}/reCOGnizer_results.tsv",
+        tsv="<results>/recognizer/prok/{sample}/reCOGnizer_results.tsv",
     log:
-        "results/recognizer/prok/{sample}.log",
+        "<results>/recognizer/prok/{sample}.log",
     conda:
         "../envs/recognizer.yaml"
     threads: config.get("threads", {}).get("medium", 8)
@@ -56,10 +56,10 @@ rule upimapi:
     input:
         fasta=rules.prodigal.output.faa,
     output:
-        outdir=directory("results/upimapi/{sample}"),
-        results="results/upimapi/{sample}/uniprotinfo.tsv",
+        outdir=directory("<results>/upimapi/{sample}"),
+        results="<results>/upimapi/{sample}/uniprotinfo.tsv",
     log:
-        "results/upimapi/{sample}.log",
+        "<results>/upimapi/{sample}.log",
     conda:
         "../envs/upimapi.yaml"
     threads: config.get("threads", {}).get("medium", 8)
@@ -85,11 +85,11 @@ rule bakta:
     input:
         fasta=sample_fasta,
     output:
-        outdir=directory("results/bakta/{sample}"),
-        gff="results/bakta/{sample}/{sample}.gff3",
-        faa="results/bakta/{sample}/{sample}.faa",
+        outdir=directory("<results>/bakta/{sample}"),
+        gff="<results>/bakta/{sample}/{sample}.gff3",
+        faa="<results>/bakta/{sample}/{sample}.faa",
     log:
-        "results/bakta/{sample}.log",
+        "<results>/bakta/{sample}.log",
     conda:
         "../envs/bakta.yaml"
     threads: config.get("threads", {}).get("high", 16)
@@ -108,7 +108,7 @@ rule stage_gtdbtk_genomes:
     input:
         prokaryotic_gtdbtk_inputs,
     output:
-        genomes=directory("results/gtdbtk_genomes"),
+        genomes=directory("<results>/gtdbtk_genomes"),
     message:
         """--- Staging prokaryotic genomes for GTDB-Tk."""
     run:
@@ -131,9 +131,9 @@ rule gtdbtk:
     input:
         genomes=rules.stage_gtdbtk_genomes.output.genomes,
     output:
-        done=touch("results/gtdbtk/gtdbtk.done"),
+        done=touch("<results>/gtdbtk/gtdbtk.done"),
     log:
-        "results/gtdbtk/gtdbtk.log",
+        "<results>/gtdbtk/gtdbtk.log",
     conda:
         "../envs/gtdb-tk.yaml"
     threads: config.get("threads", {}).get("high", 16)

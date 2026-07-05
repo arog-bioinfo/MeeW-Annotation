@@ -9,11 +9,11 @@ rule prodigal:
     input:
         fasta=sample_fasta,
     output:
-        out="results/prodigal/{sample}.gff",
-        faa="results/prodigal/{sample}.faa",
-        fna="results/prodigal/{sample}.fna",
+        out="<results>/prodigal/{sample}.gff",
+        faa="<results>/prodigal/{sample}.faa",
+        fna="<results>/prodigal/{sample}.fna",
     log:
-        "results/prodigal/{sample}.log",
+        "<results>/prodigal/{sample}.log",
     conda:
         "../envs/prodigal.yaml"
     threads: config.get("threads", {}).get("low", 1)
@@ -31,9 +31,9 @@ rule recognizer:
     input:
         fasta=rules.prodigal.output.faa,
     output:
-        tsv="results/recognizer/{sample}/reCOGnizer_results.tsv",
+        tsv="<results>/recognizer/{sample}/reCOGnizer_results.tsv",
     log:
-        "results/recognizer/{sample}.log",
+        "<results>/recognizer/{sample}.log",
     conda:
         "../envs/recognizer.yaml"
     threads: config.get("threads", {}).get("medium", 8)
@@ -52,10 +52,10 @@ rule upimapi:
     input:
         fasta=rules.prodigal.output.faa,
     output:
-        outdir=directory("results/upimapi/{sample}"),
-        results="results/upimapi/{sample}/uniprotinfo.tsv",
+        outdir=directory("<results>/upimapi/{sample}"),
+        results="<results>/upimapi/{sample}/uniprotinfo.tsv",
     log:
-        "results/upimapi/{sample}.log",
+        "<results>/upimapi/{sample}.log",
     conda:
         "../envs/upimapi.yaml"
     threads: config.get("threads", {}).get("medium", 8)
@@ -81,11 +81,11 @@ rule bakta:
     input:
         fasta=sample_fasta,
     output:
-        outdir=directory("results/bakta/{sample}"),
-        gff="results/bakta/{sample}/{sample}.gff3",
-        faa="results/bakta/{sample}/{sample}.faa",
+        outdir=directory("<results>/bakta/{sample}"),
+        gff="<results>/bakta/{sample}/{sample}.gff3",
+        faa="<results>/bakta/{sample}/{sample}.faa",
     log:
-        "results/bakta/{sample}.log",
+        "<results>/bakta/{sample}.log",
     conda:
         "../envs/bakta.yaml"
     threads: config.get("threads", {}).get("high", 16)
@@ -104,9 +104,9 @@ rule gtdbtk:
     input:
         bins="data/",
     output:
-        outdir=directory("results/gtdbtk"),
+        outdir=directory("<results>/gtdbtk"),
     log:
-        "results/gtdbtk/gtdbtk.log",
+        "<results>/gtdbtk/gtdbtk.log",
     conda:
         "../envs/gtdb-tk.yaml"
     threads: config.get("threads", {}).get("high", 16)
@@ -125,9 +125,9 @@ rule metaeuk:
     input:
         fasta=sample_fasta,
     output:
-        proteins="results/metaeuk/{sample}.faa",
+        proteins="<results>/metaeuk/{sample}.faa",
     log:
-        "results/metaeuk/{sample}.log",
+        "<results>/metaeuk/{sample}.log",
     conda:
         "../envs/metaeuk.yaml"
     threads: config.get("threads", {}).get("medium", 8)

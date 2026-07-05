@@ -14,24 +14,24 @@ if not config.get("funannotate2", {}).get("enabled", True):
     euk_isolate_samples = []
 gtdbtk_targets = []
 if config.get("gtdbtk", {}).get("enabled", False) and prok_samples:
-    gtdbtk_targets = ["results/gtdbtk/gtdbtk.done"]
+    gtdbtk_targets = ["<results>/gtdbtk/gtdbtk.done"]
 
 
 FINAL_TARGETS = (
-    expand("results/bakta/{sample}/{sample}.faa", sample=prok_samples)
+    expand("<results>/bakta/{sample}/{sample}.faa", sample=prok_samples)
     + expand(
-        "results/recognizer/prok/{sample}/reCOGnizer_results.tsv",
+        "<results>/recognizer/prok/{sample}/reCOGnizer_results.tsv",
         sample=prok_samples,
     )
-    + expand("results/upimapi/{sample}/uniprotinfo.tsv", sample=prok_samples)
+    + expand("<results>/upimapi/{sample}/uniprotinfo.tsv", sample=prok_samples)
     + expand(
-        "results/recognizer/euk/{sample}/reCOGnizer_results.tsv",
+        "<results>/recognizer/euk/{sample}/reCOGnizer_results.tsv",
         sample=euk_mag_samples,
     )
     + expand(
-        "results/funannotate2/{sample}/annotate.done",
+        "<results>/funannotate2/{sample}/annotate.done",
         sample=euk_isolate_samples,
     )
     + gtdbtk_targets
-    + ["results/stage_sheets/annotation_to_metabolic_modeling.tsv"]
+    + ["<results>/stage_sheets/annotation_to_metabolic_modeling.tsv"]
 )

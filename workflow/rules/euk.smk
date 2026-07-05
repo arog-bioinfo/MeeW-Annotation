@@ -9,9 +9,9 @@ rule metaeuk:
     input:
         fasta=sample_fasta,
     output:
-        proteins="results/metaeuk/{sample}.faa",
+        proteins="<results>/metaeuk/{sample}.faa",
     log:
-        "results/metaeuk/{sample}.log",
+        "<results>/metaeuk/{sample}.log",
     conda:
         "../envs/metaeuk.yaml"
     threads: config.get("threads", {}).get("medium", 8)
@@ -30,9 +30,9 @@ rule recognizer_euk:
     input:
         fasta=rules.metaeuk.output.proteins,
     output:
-        tsv="results/recognizer/euk/{sample}/reCOGnizer_results.tsv",
+        tsv="<results>/recognizer/euk/{sample}/reCOGnizer_results.tsv",
     log:
-        "results/recognizer/euk/{sample}.log",
+        "<results>/recognizer/euk/{sample}.log",
     conda:
         "../envs/recognizer.yaml"
     threads: config.get("threads", {}).get("medium", 8)
@@ -50,9 +50,9 @@ rule recognizer_euk:
 # -----------------------------------------------------
 rule funannotate2_db:
     output:
-        done=touch("results/funannotate2/db/funannotate2_db.done"),
+        done=touch("<results>/funannotate2/db/funannotate2_db.done"),
     log:
-        "results/funannotate2/db/funannotate2_db.log",
+        "<results>/funannotate2/db/funannotate2_db.log",
     conda:
         "../envs/funannotate2.yaml"
     params:
@@ -76,11 +76,11 @@ rule funannotate2_clean:
         db=rules.funannotate2_db.output.done,
         fasta=sample_fasta,
     output:
-        outdir=directory("results/funannotate2/{sample}/clean"),
-        cleaned_fasta="results/funannotate2/{sample}/clean/cleaned.fasta",
-        done="results/funannotate2/{sample}/clean.done",
+        outdir=directory("<results>/funannotate2/{sample}/clean"),
+        cleaned_fasta="<results>/funannotate2/{sample}/clean/cleaned.fasta",
+        done="<results>/funannotate2/{sample}/clean.done",
     log:
-        "results/funannotate2/{sample}/clean.log",
+        "<results>/funannotate2/{sample}/clean.log",
     conda:
         "../envs/funannotate2.yaml"
     threads: config.get("threads", {}).get("medium", 8)
@@ -103,9 +103,9 @@ rule funannotate2_train:
         cleaned_fasta=rules.funannotate2_clean.output.cleaned_fasta,
         clean_done=rules.funannotate2_clean.output.done,
     output:
-        done="results/funannotate2/{sample}/train.done",
+        done="<results>/funannotate2/{sample}/train.done",
     log:
-        "results/funannotate2/{sample}/train.log",
+        "<results>/funannotate2/{sample}/train.log",
     conda:
         "../envs/funannotate2.yaml"
     threads: config.get("threads", {}).get("medium", 8)
@@ -114,7 +114,7 @@ rule funannotate2_train:
         db_dir=config.get("funannotate2", {}).get(
             "db_dir", "/home/argomes/resources/funannotate2_db"
         ),
-        outdir="results/funannotate2/{sample}/run",
+        outdir=lambda wc, output: str(Path(output.done).parent / "run"),
         species=config.get("funannotate2", {}).get("species", ""),
         strain=config.get("funannotate2", {}).get("strain", ""),
         extra_train=config.get("funannotate2", {}).get("extra_train", ""),
@@ -130,9 +130,9 @@ rule funannotate2_predict:
     input:
         train_done=rules.funannotate2_train.output.done,
     output:
-        done="results/funannotate2/{sample}/predict.done",
+        done="<results>/funannotate2/{sample}/predict.done",
     log:
-        "results/funannotate2/{sample}/predict.log",
+        "<results>/funannotate2/{sample}/predict.log",
     conda:
         "../envs/funannotate2.yaml"
     threads: config.get("threads", {}).get("medium", 8)
@@ -141,7 +141,7 @@ rule funannotate2_predict:
         db_dir=config.get("funannotate2", {}).get(
             "db_dir", "/home/argomes/resources/funannotate2_db"
         ),
-        outdir="results/funannotate2/{sample}/run",
+        outdir=lambda wc, output: str(Path(output.done).parent / "run"),
         species=config.get("funannotate2", {}).get("species", ""),
         strain=config.get("funannotate2", {}).get("strain", ""),
         params=config.get("funannotate2", {}).get("params", ""),
@@ -159,9 +159,9 @@ rule funannotate2_annotate:
     input:
         predict_done=rules.funannotate2_predict.output.done,
     output:
-        done="results/funannotate2/{sample}/annotate.done",
+        done="<results>/funannotate2/{sample}/annotate.done",
     log:
-        "results/funannotate2/{sample}/annotate.log",
+        "<results>/funannotate2/{sample}/annotate.log",
     conda:
         "../envs/funannotate2.yaml"
     threads: config.get("threads", {}).get("medium", 8)
@@ -170,7 +170,7 @@ rule funannotate2_annotate:
         db_dir=config.get("funannotate2", {}).get(
             "db_dir", "/home/argomes/resources/funannotate2_db"
         ),
-        outdir="results/funannotate2/{sample}/run",
+        outdir=lambda wc, output: str(Path(output.done).parent / "run"),
         species=config.get("funannotate2", {}).get("species", ""),
         strain=config.get("funannotate2", {}).get("strain", ""),
         extra_annotate=config.get("funannotate2", {}).get("extra_annotate", ""),
