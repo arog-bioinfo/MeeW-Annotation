@@ -22,10 +22,13 @@ db2file = {
     "taxids": Path(resources_dir) / "taxids_database.fasta",
 }
 
-if skip_db or (
-    skip_db_check_if_exists and (Path(db_custom).exists() or db2file[db].exists())
-):
-    skip_db = f"--skip-db-check"
+db_custom_exists = bool(db_custom) and Path(db_custom).exists()
+db_exists = bool(db) and db in db2file and db2file[db].exists()
+
+if skip_db or (skip_db_check_if_exists and (db_custom_exists or db_exists)):
+    skip_db = "--skip-db-check"
+else:
+    skip_db = ""
 
 if db:
     db = f"--database {db}"

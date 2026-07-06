@@ -103,6 +103,11 @@ rule bakta:
 
 
 # Stage only prokaryotic genomes for GTDB-Tk batch classification
+# TODO: This creates <results>/gtdbtk_genomes as GTDB-Tk staging, but MeeW
+# Binning -> Annotation runs already stage prok bins under
+# results/domain/{sample}/prok_bins; consider letting GTDB-Tk consume an
+# existing prok bins directory or making staging optional to avoid extra
+# filesystem space/inode use.
 # -----------------------------------------------------
 rule stage_gtdbtk_genomes:
     input:
