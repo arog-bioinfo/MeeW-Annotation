@@ -5,6 +5,27 @@ The workflow processes one or more Metagenome-Assembled Genomes (MAGs) per run. 
 ## General input
 
 - `sample_sheet`: path to a TSV file containing sample names, input FASTA paths, domains, and optional genome types.
+- `directory_mode`: optional batch mode used by main MeeW to consume Binning output directories directly instead of expanding the sample sheet.
+
+## Directory/batch mode
+
+Set `directory_mode.enabled: true` to annotate all bins in upstream Binning directories.
+This mode is intended for main MeeW import-based runs; standalone sample-sheet mode remains
+the default.
+
+Required directory-mode fields when enabled:
+
+- `directory_mode.sample`: sample name used in `results/{sample}/annotation/...` paths.
+- `directory_mode.prok_bins_dir`: Binning `prok_bins` directory.
+- `directory_mode.euk_bins_dir`: Binning `euk_bins` directory.
+- `directory_mode.checkm2_report`: Binning CheckM2 `quality_report.tsv`.
+- `directory_mode.eukcc_report`: Binning EukCC `eukcc.csv`.
+
+Annotation filters prokaryotic bins with CheckM2 and eukaryotic bins with EukCC using
+`qa_filter.min_completeness` and `qa_filter.max_contamination`. Passing-bin manifests are
+written in `results/{sample}/annotation/batch/qa/`; rejected bins are skipped and not
+copied. Empty `prok_bins/` or `euk_bins/` directories are valid and produce empty manifests
+plus completed batch markers.
 
 ## Sample sheet format
 
@@ -87,6 +108,14 @@ fungal_isolate	data/fungal_isolate.fasta	euk	isolate
 # General Input
 # ====================
 sample_sheet: "config/samples.tsv"
+
+directory_mode:
+  enabled: false
+  sample: ""
+  prok_bins_dir: ""
+  euk_bins_dir: ""
+  checkm2_report: ""
+  eukcc_report: ""
 
 # ====================
 # Quality Filtering

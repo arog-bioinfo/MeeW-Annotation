@@ -4,7 +4,8 @@
 
 
 def prokaryotic_gtdbtk_inputs(wildcards):
-    return samples.loc[samples["domain"] == "prok", "path"].tolist()
+    current_samples = load_samples()
+    return current_samples.loc[current_samples["domain"] == "prok", "path"].tolist()
 
 
 # Predict protein-coding genes using Prodigal
@@ -35,7 +36,7 @@ rule recognizer_prok:
     input:
         fasta=rules.prodigal.output.faa,
     output:
-        tsv="<results>/recognizer/prok/{sample}/reCOGnizer_results.tsv",
+        tsv="<results>/recognizer/prok/reCOGnizer_results.tsv",
     log:
         "<results>/recognizer/prok/{sample}.log",
     conda:
@@ -56,8 +57,8 @@ rule upimapi:
     input:
         fasta=rules.prodigal.output.faa,
     output:
-        outdir=directory("<results>/upimapi/{sample}"),
-        results="<results>/upimapi/{sample}/uniprotinfo.tsv",
+        outdir=directory("<results>/upimapi"),
+        results="<results>/upimapi/uniprotinfo.tsv",
     log:
         "<results>/upimapi/{sample}.log",
     conda:
@@ -85,9 +86,9 @@ rule bakta:
     input:
         fasta=sample_fasta,
     output:
-        outdir=directory("<results>/bakta/{sample}"),
-        gff="<results>/bakta/{sample}/{sample}.gff3",
-        faa="<results>/bakta/{sample}/{sample}.faa",
+        outdir=directory("<results>/bakta"),
+        gff="<results>/bakta/{sample}.gff3",
+        faa="<results>/bakta/{sample}.faa",
     log:
         "<results>/bakta/{sample}.log",
     conda:
@@ -124,7 +125,10 @@ rule stage_gtdbtk_genomes:
         if genomes.exists():
             shutil.rmtree(genomes)
         genomes.mkdir(parents=True)
-        for _, row in samples[samples["domain"] == "prok"].iterrows():
+        current_samples = load_samples()
+        for _, row in current_samples[
+            current_samples["domain"] == "prok"
+        ].iterrows():
             source = Path(row["path"])
             target = genomes / f"{row['sample']}.fasta"
             target.symlink_to(source.resolve())

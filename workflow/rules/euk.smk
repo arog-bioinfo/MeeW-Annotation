@@ -30,7 +30,7 @@ rule recognizer_euk:
     input:
         fasta=rules.metaeuk.output.proteins,
     output:
-        tsv="<results>/recognizer/euk/{sample}/reCOGnizer_results.tsv",
+        tsv="<results>/recognizer/euk/reCOGnizer_results.tsv",
     log:
         "<results>/recognizer/euk/{sample}.log",
     conda:
@@ -76,11 +76,11 @@ rule funannotate2_clean:
         db=rules.funannotate2_db.output.done,
         fasta=sample_fasta,
     output:
-        outdir=directory("<results>/funannotate2/{sample}/clean"),
-        cleaned_fasta="<results>/funannotate2/{sample}/clean/cleaned.fasta",
-        done="<results>/funannotate2/{sample}/clean.done",
+        outdir=directory("<results>/funannotate2/clean"),
+        cleaned_fasta="<results>/funannotate2/clean/cleaned.fasta",
+        done="<results>/funannotate2/clean.done",
     log:
-        "<results>/funannotate2/{sample}/clean.log",
+        "<results>/funannotate2/clean.{sample}.log",
     conda:
         "../envs/funannotate2.yaml"
     threads: config.get("threads", {}).get("medium", 8)
@@ -103,9 +103,9 @@ rule funannotate2_train:
         cleaned_fasta=rules.funannotate2_clean.output.cleaned_fasta,
         clean_done=rules.funannotate2_clean.output.done,
     output:
-        done="<results>/funannotate2/{sample}/train.done",
+        done="<results>/funannotate2/train.done",
     log:
-        "<results>/funannotate2/{sample}/train.log",
+        "<results>/funannotate2/train.{sample}.log",
     conda:
         "../envs/funannotate2.yaml"
     threads: config.get("threads", {}).get("medium", 8)
@@ -130,9 +130,9 @@ rule funannotate2_predict:
     input:
         train_done=rules.funannotate2_train.output.done,
     output:
-        done="<results>/funannotate2/{sample}/predict.done",
+        done="<results>/funannotate2/predict.done",
     log:
-        "<results>/funannotate2/{sample}/predict.log",
+        "<results>/funannotate2/predict.{sample}.log",
     conda:
         "../envs/funannotate2.yaml"
     threads: config.get("threads", {}).get("medium", 8)
@@ -159,9 +159,9 @@ rule funannotate2_annotate:
     input:
         predict_done=rules.funannotate2_predict.output.done,
     output:
-        done="<results>/funannotate2/{sample}/annotate.done",
+        done="<results>/funannotate2/annotate.done",
     log:
-        "<results>/funannotate2/{sample}/annotate.log",
+        "<results>/funannotate2/annotate.{sample}.log",
     conda:
         "../envs/funannotate2.yaml"
     threads: config.get("threads", {}).get("medium", 8)

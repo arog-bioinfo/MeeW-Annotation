@@ -31,7 +31,7 @@ rule recognizer:
     input:
         fasta=rules.prodigal.output.faa,
     output:
-        tsv="<results>/recognizer/{sample}/reCOGnizer_results.tsv",
+        tsv="<results>/recognizer/reCOGnizer_results.tsv",
     log:
         "<results>/recognizer/{sample}.log",
     conda:
@@ -52,8 +52,8 @@ rule upimapi:
     input:
         fasta=rules.prodigal.output.faa,
     output:
-        outdir=directory("<results>/upimapi/{sample}"),
-        results="<results>/upimapi/{sample}/uniprotinfo.tsv",
+        outdir=directory("<results>/upimapi"),
+        results="<results>/upimapi/uniprotinfo.tsv",
     log:
         "<results>/upimapi/{sample}.log",
     conda:
@@ -81,9 +81,9 @@ rule bakta:
     input:
         fasta=sample_fasta,
     output:
-        outdir=directory("<results>/bakta/{sample}"),
-        gff="<results>/bakta/{sample}/{sample}.gff3",
-        faa="<results>/bakta/{sample}/{sample}.faa",
+        outdir=directory("<results>/bakta"),
+        gff="<results>/bakta/{sample}.gff3",
+        faa="<results>/bakta/{sample}.faa",
     log:
         "<results>/bakta/{sample}.log",
     conda:

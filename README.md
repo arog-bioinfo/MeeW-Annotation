@@ -6,6 +6,8 @@
 
 A best-practice Snakemake workflow for the **Annotation of Metagenome-Assembled Genomes (MAGs)**.
 
+Standalone runs use the default Snakemake pathvar root `results/{sample}`. When imported by main MeeW, the same `results` pathvar is overridden to the stage-scoped root `results/{sample}/annotation`. This path normalization is not MeeW Step 2 wiring.
+
 ## Pipeline Overview
 
 This workflow orchestrates several state-of-the-art bioinformatics tools to perform structural and functional annotation, as well as taxonomic classification. It takes assembled genomes (MAGs or isolates) in `*.fasta` or `*.fna` format as input. FASTA inputs may be produced by upstream `MeeW-Assembly` or `MeeW-Binning` workflows, or supplied from compatible external sources.
@@ -16,7 +18,7 @@ This workflow orchestrates several state-of-the-art bioinformatics tools to perf
 4. **Protein Mapping:** Functional annotation via UniProt databases using `UPIMAPI`.
 5. **Taxonomic Classification:** Optional prokaryotic-only taxonomic assignment using `GTDB-Tk`.
 
-The workflow also writes an Annotation-owned handoff sheet for downstream Metabolic Modeling at `results/stage_sheets/annotation_to_metabolic_modeling.tsv`. This TSV contains one row per prokaryotic MAG/bin only, with columns `mag` and `path`, where `path` is the absolute path to the Bakta protein FASTA output (`results/bakta/{sample}/{sample}.faa`). Eukaryotic bins are not included in this Metabolic Modeling handoff.
+The workflow also writes an Annotation-owned handoff sheet for downstream Metabolic Modeling at `results/{sample}/stage_sheets/annotation_to_metabolic_modeling.tsv`. This TSV contains one row per prokaryotic MAG/bin only, with columns `mag` and `path`, where `path` is the absolute path to the Bakta protein FASTA output (`results/{sample}/bakta/{sample}.faa`). Eukaryotic bins are not included in this Metabolic Modeling handoff.
 
 ## Configuration & Input Data
 
@@ -26,6 +28,21 @@ By default, the workflow expects:
 
 - A TSV sample sheet (`config/samples.tsv`) containing the paths to your `*.fasta` files.
 - A YAML configuration file (`config/config.yaml`) defining tool parameters and database locations.
+
+## Directory/batch mode
+
+When imported by main MeeW, Annotation can run in `directory_mode` without consuming
+`binning_to_annotation.tsv`. In this mode main MeeW passes the produced Binning
+directories `results/{sample}/binning/domain/prok_bins` and
+`results/{sample}/binning/domain/euk_bins` plus the produced CheckM2/EukCC QA reports.
+Annotation writes internal passing-bin manifests under
+`results/{sample}/annotation/batch/qa/`; bins failing QA are skipped and passing bins are
+symlink-staged rather than copied, avoiding data duplication while giving batch tools a
+filtered input directory.
+Batch outputs/markers are written under `results/{sample}/annotation/batch/` for Bakta,
+Prodigal, prokaryotic reCOGnizer, UPIMAPI, MetaEuk, and eukaryotic reCOGnizer. Empty
+prokaryotic or eukaryotic bin directories produce empty manifests and completed batch
+markers.
 
 ## Acknowledgements / Authorship
 

@@ -9,11 +9,16 @@
 configfile: "config/config.yaml"
 
 
+pathvars:
+    results="results/{sample}",
+
+
 # load rules
 # -----------------------------------------------------
 include: "rules/common.smk"
 include: "rules/prok.smk"
 include: "rules/euk.smk"
+include: "rules/batch.smk"
 include: "rules/annotation_targets.smk"
 include: "rules/stage_sheets.smk"
 

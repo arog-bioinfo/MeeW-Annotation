@@ -3,6 +3,14 @@
 # ====================
 sample_sheet: "config/samples.tsv"
 
+directory_mode:
+  enabled: false
+  sample: ""
+  prok_bins_dir: ""
+  euk_bins_dir: ""
+  checkm2_report: ""
+  eukcc_report: ""
+
 # ====================
 # Quality Filtering
 # ====================
