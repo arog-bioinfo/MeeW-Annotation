@@ -29,10 +29,25 @@ def _as_list(paths):
     return list(paths)
 
 
+def _read_report(path, sep):
+    if sep is None:
+        return pd.read_csv(path, sep=None, engine="python")
+    return pd.read_csv(path, sep=sep)
+
+
 def _read_reports(paths, sep, columns, report_name):
     reports = []
     for path in _as_list(paths):
-        report = pd.read_csv(path, sep=sep)
+        report = None
+        if isinstance(sep, (list, tuple)):
+            for candidate_sep in sep:
+                candidate_report = _read_report(path, candidate_sep)
+                if all(column in candidate_report.columns for column in columns):
+                    report = candidate_report
+                    break
+                report = candidate_report
+        else:
+            report = _read_report(path, sep)
         missing = [column for column in columns if column not in report.columns]
         if missing:
             raise ValueError(
@@ -63,8 +78,8 @@ def parse_checkm2_reports(paths):
 
 
 def parse_eukcc_reports(paths):
-    """Parse one or more EukCC CSV reports."""
-    return _read_reports(paths, ",", EUKCC_COLUMNS, "EukCC")
+    """Parse one or more EukCC CSV/TSV reports."""
+    return _read_reports(paths, ("\t", ",", None), EUKCC_COLUMNS, "EukCC")
 
 
 def fasta_stem(path):
