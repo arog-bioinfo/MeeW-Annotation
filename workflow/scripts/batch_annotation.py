@@ -85,35 +85,39 @@ def passing_bins(domain):
     Path(snakemake.output.done).touch()
 
 
-def log_redirect():
+def reset_log():
     log = Path(snakemake.log[0])
     log.parent.mkdir(parents=True, exist_ok=True)
     log.write_text("", encoding="utf-8")
-    return f">> {log} 2>&1"
+    return log
 
 
 def run_bakta(rows):
     outdir = reset_directory(snakemake.output.outdir)
     db = snakemake.params.get("db", "")
-    db_cmd = f"--db {db}" if db else ""
+    db_option = "--db" if db else ""
     extra = snakemake.params.get("extra", "")
-    redir = log_redirect()
+    log = reset_log()
     for sample, fasta in rows:
         sample_outdir = outdir / sample
         shell(
-            "bakta --output {sample_outdir} --prefix {sample} --force "
-            "--threads {snakemake.threads} {db_cmd} {extra} {fasta} {redir}"
+            "bakta --output {sample_outdir:q} --prefix {sample:q} --force "
+            "--threads {snakemake.threads} {db_option} {db:q} {extra} {fasta:q} "
+            ">> {log:q} 2>&1"
         )
 
 
 def run_prodigal(rows):
     outdir = reset_directory(snakemake.output.outdir)
     extra = snakemake.params.get("extra", "")
-    redir = log_redirect()
+    log = reset_log()
     for sample, fasta in rows:
+        gff = outdir / f"{sample}.gff"
+        faa = outdir / f"{sample}.faa"
+        fna = outdir / f"{sample}.fna"
         shell(
-            "prodigal -i {fasta} -o {outdir}/{sample}.gff "
-            "-a {outdir}/{sample}.faa -d {outdir}/{sample}.fna {extra} {redir}"
+            "prodigal -i {fasta:q} -o {gff:q} "
+            "-a {faa:q} -d {fna:q} {extra} >> {log:q} 2>&1"
         )
 
 
@@ -141,17 +145,18 @@ def protein_rows_from_manifest():
 def run_recognizer(rows, euk=False):
     outdir = reset_directory(snakemake.output.outdir)
     resources_dir = snakemake.params.get("resources_dir", "")
-    resources_cmd = f"-rd {resources_dir}" if resources_dir else ""
+    resources_option = "-rd" if resources_dir else ""
     custom_db = snakemake.params.get("custom_db", "") if euk else ""
-    custom_db_cmd = f"--custom-databases -dbs {custom_db}" if custom_db else ""
+    custom_db_options = "--custom-databases -dbs" if custom_db else ""
     extra = snakemake.params.get("extra", "")
-    redir = log_redirect()
+    log = reset_log()
     for sample, fasta in rows:
         sample_outdir = outdir / sample
         sample_outdir.mkdir(parents=True, exist_ok=True)
         shell(
-            "recognizer -f {fasta} -o {sample_outdir} -t {snakemake.threads} "
-            "{custom_db_cmd} {resources_cmd} {extra} {redir}"
+            "recognizer -f {fasta:q} -o {sample_outdir:q} -t {snakemake.threads} "
+            "{custom_db_options} {custom_db:q} "
+            "{resources_option} {resources_dir:q} {extra} >> {log:q} 2>&1"
         )
 
 
@@ -161,10 +166,10 @@ def run_upimapi(rows):
     db_custom = snakemake.params.get("db_custom", "")
     if db and db_custom:
         raise ValueError("Only one UPIMAPI database mode can be configured.")
-    db_cmd = f"--database {db}" if db else ""
-    db_custom_cmd = f"--database {db_custom}" if db_custom else ""
+    db_option = "--database" if db else ""
+    db_custom_option = "--database" if db_custom else ""
     resources_dir = snakemake.params.get("resources_dir", "")
-    resources_cmd = f"-rd {resources_dir}" if resources_dir else ""
+    resources_option = "-rd" if resources_dir else ""
     skip_db_check_if_exists = snakemake.params.get("skip_db_check_if_exists", True)
     db2file = {
         "uniprot": Path(resources_dir) / "uniprot.fasta",
@@ -179,14 +184,15 @@ def run_upimapi(rows):
         else ""
     )
     extra = snakemake.params.get("extra", "")
-    redir = log_redirect()
+    log = reset_log()
     for sample, fasta in rows:
         sample_outdir = outdir / sample
         sample_outdir.mkdir(parents=True, exist_ok=True)
         shell(
-            "upimapi --input {fasta} --output {sample_outdir} {db_cmd} "
-            "{db_custom_cmd} {resources_cmd} --threads {snakemake.threads} "
-            "{skip_db} {extra} {redir}"
+            "upimapi --input {fasta:q} --output {sample_outdir:q} "
+            "{db_option} {db:q} {db_custom_option} {db_custom:q} "
+            "{resources_option} {resources_dir:q} --threads {snakemake.threads} "
+            "{skip_db} {extra} >> {log:q} 2>&1"
         )
 
 
@@ -194,7 +200,7 @@ def run_metaeuk(rows):
     outdir = reset_directory(snakemake.output.outdir)
     db = snakemake.params.db
     extra = snakemake.params.get("extra", "")
-    redir = log_redirect()
+    log = reset_log()
     for sample, fasta in rows:
         sample_outdir = outdir / sample
         tmp_dir = sample_outdir / "tmp"
@@ -202,7 +208,7 @@ def run_metaeuk(rows):
         prefix = sample_outdir / sample
         shell(
             "metaeuk easy-predict --threads {snakemake.threads} {extra} "
-            "{fasta} {db} {prefix} {tmp_dir} {redir}"
+            "{fasta:q} {db:q} {prefix:q} {tmp_dir:q} >> {log:q} 2>&1"
         )
         expected = sample_outdir / f"{sample}.faa"
         for suffix in [".fas", ".fasta", ".faa"]:

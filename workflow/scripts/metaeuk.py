@@ -25,10 +25,10 @@ shell(
     "metaeuk easy-predict "
     "--threads {snakemake.threads} "
     "{extra} "
-    "{snakemake.input.fasta} "
-    "{snakemake.params.db} "
-    "{out_prefix} "
-    "{tmp_dir} "
+    "{snakemake.input.fasta:q} "
+    "{snakemake.params.db:q} "
+    "{out_prefix:q} "
+    "{tmp_dir:q} "
     "{log}"
 )
 

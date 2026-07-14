@@ -7,7 +7,7 @@ properties:
     description: MAG name or unique identifier
   path:
     type: string
-    description: path to the MAG FASTA file
+    description: path to the MAG FASTA file; environment variables and ~ are expanded and relative paths use the Snakemake working directory
   domain:
     type: string
     description: sample domain controlling annotation path

@@ -57,9 +57,7 @@ rule funannotate2_db:
         "../envs/funannotate2.yaml"
     params:
         step="install_db",
-        db_dir=config.get("funannotate2", {}).get(
-            "db_dir", "/home/argomes/resources/funannotate2_db"
-        ),
+        db_dir=config.get("funannotate2", {}).get("db_dir", ""),
         install_db=config.get("funannotate2", {}).get("install_db", False),
         databases=config.get("funannotate2", {}).get("databases", ["all"]),
         extra_install=config.get("funannotate2", {}).get("extra_install", ""),
@@ -86,9 +84,7 @@ rule funannotate2_clean:
     threads: config.get("threads", {}).get("medium", 8)
     params:
         step="clean",
-        db_dir=config.get("funannotate2", {}).get(
-            "db_dir", "/home/argomes/resources/funannotate2_db"
-        ),
+        db_dir=config.get("funannotate2", {}).get("db_dir", ""),
         extra_clean=config.get("funannotate2", {}).get("extra_clean", ""),
     message:
         """--- Running Funannotate2 clean for {wildcards.sample}."""
@@ -111,9 +107,7 @@ rule funannotate2_train:
     threads: config.get("threads", {}).get("medium", 8)
     params:
         step="train",
-        db_dir=config.get("funannotate2", {}).get(
-            "db_dir", "/home/argomes/resources/funannotate2_db"
-        ),
+        db_dir=config.get("funannotate2", {}).get("db_dir", ""),
         outdir=lambda wc, output: str(Path(output.done).parent / "run"),
         species=config.get("funannotate2", {}).get("species", ""),
         strain=config.get("funannotate2", {}).get("strain", ""),
@@ -138,9 +132,7 @@ rule funannotate2_predict:
     threads: config.get("threads", {}).get("medium", 8)
     params:
         step="predict",
-        db_dir=config.get("funannotate2", {}).get(
-            "db_dir", "/home/argomes/resources/funannotate2_db"
-        ),
+        db_dir=config.get("funannotate2", {}).get("db_dir", ""),
         outdir=lambda wc, output: str(Path(output.done).parent / "run"),
         species=config.get("funannotate2", {}).get("species", ""),
         strain=config.get("funannotate2", {}).get("strain", ""),
@@ -167,9 +159,7 @@ rule funannotate2_annotate:
     threads: config.get("threads", {}).get("medium", 8)
     params:
         step="annotate",
-        db_dir=config.get("funannotate2", {}).get(
-            "db_dir", "/home/argomes/resources/funannotate2_db"
-        ),
+        db_dir=config.get("funannotate2", {}).get("db_dir", ""),
         outdir=lambda wc, output: str(Path(output.done).parent / "run"),
         species=config.get("funannotate2", {}).get("species", ""),
         strain=config.get("funannotate2", {}).get("strain", ""),

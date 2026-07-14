@@ -4,7 +4,7 @@ description: main configuration schema for the workflow
 properties:
   sample_sheet:
     type: string
-    description: path to sample sheet, mandatory
+    description: path to sample sheet; environment variables and ~ are expanded and relative paths use the Snakemake working directory
     default: config/samples.tsv
 
   directory_mode:
@@ -21,19 +21,19 @@ properties:
         default: ""
       prok_bins_dir:
         type: string
-        description: directory containing prokaryotic bins from Binning domain separation
+        description: directory containing prokaryotic bins from Binning domain separation; environment variables and ~ are supported
         default: ""
       euk_bins_dir:
         type: string
-        description: directory containing eukaryotic bins from Binning domain separation
+        description: directory containing eukaryotic bins from Binning domain separation; environment variables and ~ are supported
         default: ""
       checkm2_report:
         type: string
-        description: CheckM2 quality_report.tsv for prokaryotic bins
+        description: CheckM2 quality_report.tsv for prokaryotic bins; environment variables and ~ are supported
         default: ""
       eukcc_report:
         type: string
-        description: EukCC eukcc.csv for eukaryotic bins
+        description: EukCC eukcc.csv for eukaryotic bins; environment variables and ~ are supported
         default: ""
     required:
       - enabled
@@ -92,7 +92,7 @@ properties:
     properties:
       db:
         type: string
-        description: path to Bakta database directory
+        description: optional explicit Bakta database directory; otherwise BAKTA_DB and the MeeW resource roots are checked
       extra:
         type: string
         description: extra CLI options passed to Bakta wrapper
@@ -110,7 +110,7 @@ properties:
         default: false
       data_dir:
         type: string
-        description: path to GTDB-Tk database directory
+        description: optional explicit GTDB-Tk database directory; otherwise GTDBTK_DATA_PATH and the MeeW resource roots are checked
       extra:
         type: string
         description: extra CLI options passed to GTDB-Tk wrapper
@@ -135,7 +135,7 @@ properties:
     properties:
       db:
         type: string
-        description: path to MetaEuk reference database
+        description: optional explicit MetaEuk reference database; otherwise METAEUK_DB and the MeeW resource roots are checked
       extra:
         type: string
         description: extra CLI options passed to MetaEuk wrapper
@@ -149,7 +149,7 @@ properties:
     properties:
       resources_dir:
         type: string
-        description: path to prokaryotic reCOGnizer database directory
+        description: optional explicit prokaryotic reCOGnizer database directory; otherwise RECOGNIZER_RESOURCES and the MeeW resource roots are checked
       extra:
         type: string
         description: extra CLI options passed to prokaryotic reCOGnizer wrapper
@@ -163,7 +163,7 @@ properties:
     properties:
       resources_dir:
         type: string
-        description: path to eukaryotic reCOGnizer database directory
+        description: optional explicit eukaryotic reCOGnizer database directory; otherwise RECOGNIZER_RESOURCES and the MeeW resource roots are checked
       custom_db:
         type: string
         description: path to KOG/custom database for eukaryotic reCOGnizer; empty disables custom DB
@@ -184,7 +184,7 @@ properties:
         default: true
       db_dir:
         type: string
-        description: path to the Funannotate2 database directory
+        description: optional explicit Funannotate2 database directory; otherwise FUNANNOTATE2_DB and the MeeW resource roots are checked
       install_db:
         type: boolean
         description: install missing Funannotate2 databases during real workflow execution
@@ -260,7 +260,7 @@ properties:
         description: path to a custom UPIMAPI database FASTA; leave empty when using db
       resources_dir:
         type: string
-        description: path to UPIMAPI resources database directory
+        description: optional explicit UPIMAPI resources database directory; otherwise UPIMAPI_RESOURCES and the MeeW resource roots are checked
       extra:
         type: string
         description: extra CLI options passed to UPIMAPI wrapper

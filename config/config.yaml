@@ -36,7 +36,7 @@ prodigal:
 # Bakta
 # --------------------
 bakta:
-  db: "/home/argomes/resources/bakta_db/db"
+  db: ""
   extra: ""
 
 # --------------------
@@ -44,14 +44,14 @@ bakta:
 # --------------------
 gtdbtk:
   enabled: false
-  data_dir: "/home/argomes/resources/gtdbtk_db"
+  data_dir: ""
   extra: ""
 
 # --------------------
 # reCOGnizer Prokaryotic
 # --------------------
 recognizer_prok:
-  resources_dir: "/home/argomes/resources/recognizer_db"
+  resources_dir: ""
   extra: ""
 
 # --------------------
@@ -60,7 +60,7 @@ recognizer_prok:
 upimapi:
   db: "swissprot"
   db_custom: ""
-  resources_dir: "/home/argomes/resources/upimapi_db"
+  resources_dir: ""
   extra: ""
   skip_db_check_if_exists: true
 
@@ -72,14 +72,14 @@ upimapi:
 # MetaEuk
 # --------------------
 metaeuk:
-  db: "/home/argomes/resources/metaeuk_db/uniprot_db"
+  db: ""
   extra: ""
 
 # --------------------
 # reCOGnizer Eukaryotic
 # --------------------
 recognizer_euk:
-  resources_dir: "/home/argomes/resources/recognizer_db"
+  resources_dir: ""
   custom_db: ""
   extra: ""
 
@@ -88,7 +88,7 @@ recognizer_euk:
 # --------------------
 funannotate2:
   enabled: true
-  db_dir: "/home/argomes/resources/funannotate2_db"
+  db_dir: ""
   install_db: true
   databases:
     - all

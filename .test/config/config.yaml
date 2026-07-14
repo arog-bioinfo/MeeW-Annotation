@@ -80,7 +80,7 @@ recognizer_euk:
 # --------------------
 funannotate2:
   enabled: true
-  db_dir: "/home/argomes/resources/funannotate2_db"
+  db_dir: "resources/funannotate2_db"
   install_db: true
   databases:
     - all

@@ -1,6 +1,6 @@
 channels:
   - conda-forge
-  - bioconda
   - nodefaults
 dependencies:
-  - recognizer =1.12.2
+  - python=3.12
+  - pandas=2.3

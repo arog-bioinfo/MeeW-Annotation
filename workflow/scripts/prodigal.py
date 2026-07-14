@@ -3,24 +3,27 @@ from snakemake.shell import shell
 log = snakemake.log_fmt_shell(stdout=True, stderr=True)
 extra = snakemake.params.get("extra", "")
 
-out_args = ""
+out_file = snakemake.output.get("out") or ""
+if not out_file and len(snakemake.output) == 1:
+    out_file = snakemake.output[0]
+out_option = "-o" if out_file else ""
 
-out_file = snakemake.output.get("out")
-if out_file:
-    out_args += f" -o {out_file}"
-elif len(snakemake.output) == 1:
-    out_args += f" -o {snakemake.output[0]}"
+faa_file = snakemake.output.get("faa") or ""
+faa_option = "-a" if faa_file else ""
 
-faa_file = snakemake.output.get("faa")
-if faa_file:
-    out_args += f" -a {faa_file}"
+fna_file = snakemake.output.get("fna") or ""
+fna_option = "-d" if fna_file else ""
 
-fna_file = snakemake.output.get("fna")
-if fna_file:
-    out_args += f" -d {fna_file}"
+stat_file = snakemake.output.get("stat") or ""
+stat_option = "-s" if stat_file else ""
 
-stat_file = snakemake.output.get("stat")
-if stat_file:
-    out_args += f" -s {stat_file}"
-
-shell("prodigal " "-i {snakemake.input.fasta} " "{out_args} " "{extra} " "{log}")
+shell(
+    "prodigal "
+    "-i {snakemake.input.fasta:q} "
+    "{out_option} {out_file:q} "
+    "{faa_option} {faa_file:q} "
+    "{fna_option} {fna_file:q} "
+    "{stat_option} {stat_file:q} "
+    "{extra} "
+    "{log}"
+)

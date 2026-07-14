@@ -11,7 +11,7 @@ if db and db_custom:
         "Can choose only one option. Or upimapi options (db) or custom db path (db_custom)"
     )
 
-resources_dir = snakemake.params.get("resources_dir")
+resources_dir = snakemake.params.get("resources_dir", "")
 
 skip_db_check_if_exists = snakemake.params.get("skip_db_check_if_exists", True)
 skip_db = snakemake.params.get("skip_db", False)
@@ -26,30 +26,25 @@ db_custom_exists = bool(db_custom) and Path(db_custom).exists()
 db_exists = bool(db) and db in db2file and db2file[db].exists()
 
 if skip_db or (skip_db_check_if_exists and (db_custom_exists or db_exists)):
-    skip_db = "--skip-db-check"
+    skip_db_option = "--skip-db-check"
 else:
-    skip_db = ""
+    skip_db_option = ""
 
-if db:
-    db = f"--database {db}"
-
-if db_custom:
-    db_custom = f"--database {db_custom}"
-
-if resources_dir:
-    resources_dir = f"-rd {resources_dir}"
+db_option = "--database" if db else ""
+db_custom_option = "--database" if db_custom else ""
+resources_option = "-rd" if resources_dir else ""
 
 tsv_output = [out for out in snakemake.output if out.endswith(".tsv")][0]
 outdir = Path(tsv_output).parent
 
 shell(
     "upimapi "
-    "--input {snakemake.input.fasta} "
-    "--output {outdir} "
-    "{db} "
-    "{db_custom} "
-    "{resources_dir} "
-    "{skip_db} "
+    "--input {snakemake.input.fasta:q} "
+    "--output {outdir:q} "
+    "{db_option} {db:q} "
+    "{db_custom_option} {db_custom:q} "
+    "{resources_option} {resources_dir:q} "
+    "{skip_db_option} "
     "--threads {snakemake.threads} "
     "{extra} "
     "{log}"

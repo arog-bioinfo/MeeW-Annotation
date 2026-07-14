@@ -62,9 +62,7 @@ rule upimapi:
     params:
         db=config.get("upimapi", {}).get("db", "swissprot"),
         db_custom=config.get("upimapi", {}).get("db_custom", ""),
-        resources_dir=config.get("upimapi", {}).get(
-            "resources_dir", "resources/upimapi_db"
-        ),
+        resources_dir=config.get("upimapi", {}).get("resources_dir", ""),
         extra=config.get("upimapi", {}).get("extra", ""),
         skip_db_check_if_exists=config.get("upimapi", {}).get(
             "skip_db_check_if_exists", True

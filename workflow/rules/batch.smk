@@ -3,15 +3,6 @@
 # ----------------------------------------------------- #
 
 
-def directory_mode_path(key, wildcards):
-    value = config.get("directory_mode", {}).get(key, "")
-    return str(value).format(sample=wildcards.sample)
-
-
-def directory_mode_enabled():
-    return config.get("directory_mode", {}).get("enabled", False)
-
-
 rule filter_passing_prok_bins:
     input:
         bins_dir=lambda wc: directory_mode_path("prok_bins_dir", wc),
@@ -20,6 +11,10 @@ rule filter_passing_prok_bins:
         passing_dir=directory("<results>/batch/qa/prok/passing_bins"),
         manifest="<results>/batch/qa/prok/passing_bins.tsv",
         done=touch("<results>/batch/qa/prok/passing_bins.done"),
+    log:
+        "<results>/batch/logs/filter_prok.log",
+    conda:
+        "../envs/python.yaml"
     params:
         action="filter_prok",
         min_completeness=config.get("qa_filter", {}).get("min_completeness", 50.0),
@@ -38,6 +33,10 @@ rule filter_passing_euk_bins:
         passing_dir=directory("<results>/batch/qa/euk/passing_bins"),
         manifest="<results>/batch/qa/euk/passing_bins.tsv",
         done=touch("<results>/batch/qa/euk/passing_bins.done"),
+    log:
+        "<results>/batch/logs/filter_euk.log",
+    conda:
+        "../envs/python.yaml"
     params:
         action="filter_euk",
         min_completeness=config.get("qa_filter", {}).get("min_completeness", 50.0),

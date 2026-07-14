@@ -3,11 +3,6 @@
 # ----------------------------------------------------- #
 
 
-def prokaryotic_gtdbtk_inputs(wildcards):
-    current_samples = load_samples()
-    return current_samples.loc[current_samples["domain"] == "prok", "path"].tolist()
-
-
 # Predict protein-coding genes using Prodigal
 # -----------------------------------------------------
 rule prodigal:
@@ -67,9 +62,7 @@ rule upimapi:
     params:
         db=config.get("upimapi", {}).get("db", "swissprot"),
         db_custom=config.get("upimapi", {}).get("db_custom", ""),
-        resources_dir=config.get("upimapi", {}).get(
-            "resources_dir", "resources/upimapi_db"
-        ),
+        resources_dir=config.get("upimapi", {}).get("resources_dir", ""),
         extra=config.get("upimapi", {}).get("extra", ""),
         skip_db_check_if_exists=config.get("upimapi", {}).get(
             "skip_db_check_if_exists", True
@@ -115,23 +108,18 @@ rule stage_gtdbtk_genomes:
         prokaryotic_gtdbtk_inputs,
     output:
         genomes=directory("<results>/gtdbtk_genomes"),
+    log:
+        "<results>/gtdbtk_genomes.log",
+    container:
+        "docker://python:3.11-slim"
+    params:
+        samples=lambda wc: load_samples()
+        .loc[lambda frame: frame["domain"] == "prok", "sample"]
+        .tolist(),
     message:
         """--- Staging prokaryotic genomes for GTDB-Tk."""
-    run:
-        import shutil
-        from pathlib import Path
-
-        genomes = Path(output.genomes)
-        if genomes.exists():
-            shutil.rmtree(genomes)
-        genomes.mkdir(parents=True)
-        current_samples = load_samples()
-        for _, row in current_samples[
-            current_samples["domain"] == "prok"
-        ].iterrows():
-            source = Path(row["path"])
-            target = genomes / f"{row['sample']}.fasta"
-            target.symlink_to(source.resolve())
+    script:
+        "../scripts/stage_gtdbtk_genomes.py"
 
 
 # Optional prokaryotic genome classification using GTDB-Tk

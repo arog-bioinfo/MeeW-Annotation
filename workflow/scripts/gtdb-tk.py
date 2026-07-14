@@ -18,7 +18,7 @@ shell(
     "gtdbtk classify_wf"
     " --genome_dir {snakemake.input[0]:q}"
     " --out_dir {out_dir:q}"
-    " --extension {extension}"
+    " --extension {extension:q}"
     " --cpus {snakemake.threads}"
     " --force"
     " {extra}"

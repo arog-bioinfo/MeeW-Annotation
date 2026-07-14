@@ -7,6 +7,29 @@ The workflow processes one or more Metagenome-Assembled Genomes (MAGs) per run. 
 - `sample_sheet`: path to a TSV file containing sample names, input FASTA paths, domains, and optional genome types.
 - `directory_mode`: optional batch mode used by main MeeW to consume Binning output directories directly instead of expanding the sample sheet.
 
+All configured paths, including sample-sheet FASTA paths, expand `~` and
+environment variables. Relative paths remain relative to the Snakemake working
+directory and are not rebased to the config or sample-sheet location.
+
+## Database/resource lookup
+
+Each database field uses: explicit config; its tool variable; `MEEW_RESOURCES`;
+`$XDG_DATA_HOME/meew`; then `~/.local/share/meew`. Resource-root fallbacks
+derive these existing layout names:
+
+| Tool         | Tool variable          | Derived path under resource root |
+| ------------ | ---------------------- | -------------------------------- |
+| Bakta        | `BAKTA_DB`             | `bakta_db/db`                    |
+| GTDB-Tk      | `GTDBTK_DATA_PATH`     | `gtdbtk_db`                      |
+| reCOGnizer   | `RECOGNIZER_RESOURCES` | `recognizer_db`                  |
+| UPIMAPI      | `UPIMAPI_RESOURCES`    | `upimapi_db`                     |
+| MetaEuk      | `METAEUK_DB`           | `metaeuk_db/uniprot_db`          |
+| Funannotate2 | `FUNANNOTATE2_DB`      | `funannotate2_db`                |
+
+These paths do not install or bundle databases. Install resources required by
+the annotation paths you run; only existing tool-specific installation behavior
+(such as the configured Bakta/Funannotate2 setup) can create missing resources.
+
 ## Directory/batch mode
 
 Set `directory_mode.enabled: true` to annotate all bins in upstream Binning directories.
@@ -69,7 +92,7 @@ fungal_isolate	data/fungal_isolate.fasta	euk	isolate
 - `bakta.db`: path to the Bakta database directory.
 - `bakta.extra`: optional extra options string passed to the Bakta wrapper.
 - `gtdbtk.enabled`: when `true`, run optional GTDB-Tk classification for prokaryotic genomes only. Eukaryotic samples are not staged or classified.
-- `gtdbtk.data_dir`: path to the GTDB-Tk reference database directory. The recommended path is `/home/argomes/resources/gtdbtk_db`; the database is not downloaded automatically and this path is only required when `gtdbtk.enabled` is `true`.
+- `gtdbtk.data_dir`: optional explicit GTDB-Tk reference database directory. The database is not downloaded automatically and is used only when `gtdbtk.enabled` is `true`.
 - `gtdbtk.extra`: optional extra options string passed to the GTDB-Tk wrapper.
 - `recognizer_prok.resources_dir`: path to the prokaryotic reCOGnizer resources database directory.
 - `recognizer_prok.extra`: optional extra options string passed to the prokaryotic reCOGnizer wrapper.
@@ -87,7 +110,7 @@ fungal_isolate	data/fungal_isolate.fasta	euk	isolate
 - `recognizer_euk.custom_db`: path to a KOG/custom database for eukaryotic reCOGnizer. Leave empty to disable a custom eukaryotic database.
 - `recognizer_euk.extra`: optional extra options string passed to the eukaryotic reCOGnizer wrapper.
 - `funannotate2.enabled`: when `true`, target Funannotate2 for eukaryotic isolate genomes (`domain: euk`, `genome_type: isolate`).
-- `funannotate2.db_dir`: Funannotate2 database directory. The default is `/home/argomes/resources/funannotate2_db`.
+- `funannotate2.db_dir`: optional explicit Funannotate2 database directory; portable resource lookup supplies the default.
 - `funannotate2.install_db`: when `true`, a real workflow run installs missing Funannotate2 databases into `funannotate2.db_dir`; dry-runs only plan this step.
 - `funannotate2.databases`: Funannotate2 database names to install, for example `all`.
 - `funannotate2.extra_install`: optional extra CLI options passed to `funannotate2 install`.
@@ -150,7 +173,7 @@ bakta:
 # --------------------
 gtdbtk:
   enabled: false
-  data_dir: "/home/argomes/resources/gtdbtk_db"
+  data_dir: ""
   extra: ""
 
 # --------------------
@@ -194,7 +217,7 @@ recognizer_euk:
 # --------------------
 funannotate2:
   enabled: true
-  db_dir: "/home/argomes/resources/funannotate2_db"
+  db_dir: ""
   install_db: true
   databases:
     - all
