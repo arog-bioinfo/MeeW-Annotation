@@ -1,0 +1,69 @@
+from snakemake.utils import min_version
+
+min_version("9.12.0")
+
+
+# load configuration
+# -----------------------------------------------------
+configfile: "config/config.yaml"
+
+
+# load rules
+# -----------------------------------------------------
+include: "rules/common.smk"
+
+
+pathvars:
+    results=RESULTS_ROOT,
+    logs=LOGS_ROOT,
+
+
+wildcard_constraints:
+    bin=ANNOTATION_BIN_WILDCARD_REGEX,
+
+
+include: "rules/qa.smk"
+
+
+if IS_ISOLATE and ISOLATE_DOMAIN == "prok":
+
+    include: "rules/prok.smk"
+
+elif IS_ISOLATE:
+
+    include: "rules/euk.smk"
+
+
+if IS_METAGENOME:
+
+    include: "rules/batch.smk"
+
+
+if GTDBTK_ENABLED and (IS_METAGENOME or (IS_ISOLATE and ISOLATE_DOMAIN == "prok")):
+
+    include: "rules/gtdbtk.smk"
+
+
+include: "rules/annotation_targets.smk"
+
+
+# optional messages, log and error handling
+# -----------------------------------------------------
+onstart:
+    print("\n--- Analysis started ---\n")
+
+
+onsuccess:
+    print("\n--- Workflow finished! ---\n")
+
+
+onerror:
+    print("\n--- An error occurred! ---\n")
+
+
+# target rules
+# -----------------------------------------------------
+rule all:
+    default_target: True
+    input:
+        FINAL_TARGETS,

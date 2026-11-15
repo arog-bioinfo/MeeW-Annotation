@@ -1,0 +1,118 @@
+# ====================
+# General Input
+# ====================
+input:
+  mode: isolate
+  sample_sheet: "config/isolate_samples.tsv"
+
+# ====================
+# Quality Assessment
+# ====================
+qa:
+  enabled: false
+  prok_tools:
+    - checkm2
+  euk_tools:
+    - eukcc
+  threads: 2
+  checkm2:
+    database_path: "resources/checkm2_db"
+    download_database: false
+    extension: ".fna"
+    extra: "--force"
+  eukcc:
+    database_path: "resources/eukcc2_db_ver_1.2"
+    download_database: false
+    extra: ""
+# ====================
+# Quality Filtering
+# ====================
+qa_filter:
+  enabled: false
+  min_completeness: 50.0
+  max_contamination: 10.0
+
+# ====================
+# Prokaryotic Annotation
+# ====================
+
+# --------------------
+# Bakta
+# --------------------
+bakta:
+  type: full
+  db: "resources/bakta_db"
+  extra: ""
+
+# --------------------
+# GTDB-Tk
+# --------------------
+gtdbtk:
+  enabled: false
+  data_dir: "resources/gtdbtk_db"
+  extra: ""
+
+# --------------------
+# reCOGnizer Prokaryotic
+# --------------------
+recognizer_prok:
+  resources_dir: "resources/recognizer_db"
+  extra: ""
+
+# --------------------
+# UPIMAPI
+# --------------------
+upimapi:
+  db: "uniprot"
+  db_custom: ""
+  resources_dir: "resources/upimapi_db"
+  extra: ""
+  skip_db_check_if_exists: true
+
+# ====================
+# Eukaryotic Annotation
+# ====================
+
+# --------------------
+# MetaEuk
+# --------------------
+metaeuk:
+  database: UniRef90
+  db: "resources/metaeuk_db/uniref90"
+  cache_dir: "resources/metaeuk_db"
+  max_exon_sets: 1
+  extra: ""
+
+# --------------------
+# reCOGnizer Eukaryotic
+# --------------------
+recognizer_euk:
+  resources_dir: "resources/recognizer_db"
+  extra: ""
+
+# --------------------
+# Funannotate2
+# --------------------
+funannotate2:
+  db_dir: "resources/funannotate2_db"
+  databases:
+    - all
+  # Funannotate2 acquires required BUSCO lineages during its own phases.
+  busco_lineage: eukaryota
+  clean: false
+  species: ""
+  strain: ""
+  params: ""
+  pretrained: ""
+  extra_clean: ""
+  extra_train: ""
+  extra_predict: ""
+  extra_annotate: ""
+
+# ====================
+# Computational Resources
+# ====================
+threads:
+  high: 16
+  medium: 8
+  low: 1

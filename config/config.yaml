@@ -1,0 +1,126 @@
+# ====================
+# General Input
+# ====================
+# Optional shared root for Annotation database/reference defaults. Explicit tool
+# paths still take precedence; leave blank to preserve environment fallbacks.
+resources_root: ""
+
+input:
+  mode: isolate
+  sample_sheet: "config/isolate_samples.tsv"
+
+# ====================
+# Quality Assessment
+# ====================
+qa:
+  enabled: true
+  prok_tools:
+    - checkm2
+  euk_tools:
+    - eukcc
+  threads: 8
+
+  checkm2:
+    database_path: ""
+    download_database: false
+    extension: ".fna"
+    extra: "--force"
+
+  eukcc:
+    database_path: ""
+    download_database: false
+    extra: ""
+
+# ====================
+# Quality Filtering
+# ====================
+qa_filter:
+  enabled: true
+  min_completeness: 50.0
+  max_contamination: 10.0
+
+# ====================
+# Prokaryotic Annotation
+# ====================
+
+# --------------------
+# Bakta
+# --------------------
+bakta:
+  type: full
+  db: ""
+  extra: ""
+
+# --------------------
+# GTDB-Tk
+# --------------------
+gtdbtk:
+  enabled: false
+  data_dir: ""
+  extra: ""
+
+# --------------------
+# reCOGnizer Prokaryotic
+# --------------------
+recognizer_prok:
+  resources_dir: ""
+  extra: ""
+
+# --------------------
+# UPIMAPI
+# --------------------
+upimapi:
+  db: "uniprot"
+  db_custom: ""
+  resources_dir: ""
+  extra: ""
+  skip_db_check_if_exists: true
+
+# ====================
+# Eukaryotic Annotation
+# ====================
+
+# --------------------
+# MetaEuk
+# --------------------
+metaeuk:
+  database: UniRef90
+  db: ""
+  cache_dir: ""
+  max_exon_sets: 1
+  extra: ""
+
+# --------------------
+# reCOGnizer Eukaryotic
+# --------------------
+recognizer_euk:
+  resources_dir: ""
+  extra: ""
+
+# --------------------
+# Funannotate2
+# --------------------
+funannotate2:
+  # The adapter reuses ready entries and safely prepares wholly absent entries.
+  db_dir: ""
+  databases:
+    - all
+  # Funannotate2 acquires required BUSCO lineages during its own phases.
+  busco_lineage: eukaryota
+  clean: false
+  species: ""
+  strain: ""
+  params: ""
+  pretrained: ""
+  extra_clean: ""
+  extra_train: ""
+  extra_predict: ""
+  extra_annotate: ""
+
+# ====================
+# Computational Resources
+# ====================
+threads:
+  high: 16
+  medium: 8
+  low: 1

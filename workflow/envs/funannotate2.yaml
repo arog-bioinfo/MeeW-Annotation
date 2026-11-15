@@ -1,0 +1,10 @@
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - funannotate2=26.6.21
+  - boost-cpp=1.85.0
+  - minimap2
+  - perl-hash-merge
+  - perl-mce

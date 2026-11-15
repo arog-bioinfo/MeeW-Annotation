@@ -1,0 +1,7 @@
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - metaeuk =7.bba0d80
+  - mmseqs2 =17.b804f

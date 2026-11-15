@@ -1,0 +1,23 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+type: object
+description: the single isolate input record
+properties:
+  sample:
+    type: string
+    minLength: 1
+    maxLength: 192
+    pattern: ^[A-Za-z0-9][A-Za-z0-9._-]*$
+    anyOf:
+      - maxLength: 128
+        pattern: ^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$
+      - pattern: ^[A-Za-z0-9][A-Za-z0-9._-]{0,127}_(prok|euk)_bin_[0-9]{3,}$
+  domain:
+    type: string
+    enum: [prok, euk]
+  path:
+    type: string
+    minLength: 1
+    pattern: ".*\\.([Ff][Aa]|[Ff][Nn][Aa]|[Ff][Aa][Ss][Tt][Aa])$"
+    description: existing uncompressed nucleotide FASTA; relative paths use the Snakemake working directory
+required: [sample, domain, path]
+additionalProperties: false

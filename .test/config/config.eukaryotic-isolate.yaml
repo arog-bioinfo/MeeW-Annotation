@@ -1,0 +1,9 @@
+input:
+  mode: isolate
+  sample_sheet: config/ci_eukaryotic_isolate.tsv
+qa:
+  enabled: true
+qa_filter:
+  enabled: true
+funannotate2:
+  species: CI fixture species

@@ -1,0 +1,26 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+type: object
+description: the single metagenome project input record
+properties:
+  sample:
+    type: string
+    minLength: 1
+    maxLength: 192
+    pattern: ^[A-Za-z0-9][A-Za-z0-9._-]*$
+    anyOf:
+      - maxLength: 128
+        pattern: ^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$
+      - pattern: ^[A-Za-z0-9][A-Za-z0-9._-]{0,127}_(prok|euk)_bin_[0-9]{3,}$
+  prok_bins_dir:
+    type: string
+  euk_bins_dir:
+    type: string
+required: [sample, prok_bins_dir, euk_bins_dir]
+additionalProperties: false
+anyOf:
+  - properties:
+      prok_bins_dir:
+        minLength: 1
+  - properties:
+      euk_bins_dir:
+        minLength: 1

@@ -1,0 +1,7 @@
+input:
+  mode: isolate
+  sample_sheet: config/ci_prokaryotic_isolate.tsv
+qa:
+  enabled: true
+qa_filter:
+  enabled: true

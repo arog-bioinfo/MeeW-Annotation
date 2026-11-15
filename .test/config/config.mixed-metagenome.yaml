@@ -1,0 +1,7 @@
+input:
+  mode: metagenome
+  sample_sheet: config/ci_mixed_metagenome.tsv
+qa:
+  enabled: true
+qa_filter:
+  enabled: true

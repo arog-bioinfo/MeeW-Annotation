@@ -1,0 +1,96 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  formatting:
+    name: Formatting
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Check formatting
+        uses: super-linter/super-linter@v8
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: true
+          VALIDATE_PYTHON_BLACK: true
+          VALIDATE_SNAKEMAKE_SNAKEFMT: true
+          VALIDATE_YAML_PRETTIER: true
+
+  linting:
+    name: Snakemake lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - name: Lint workflow
+        uses: snakemake/snakemake-github-action@v2
+        with:
+          directory: .test
+          snakefile: workflow/Snakefile
+          args: --lint --configfile .test/config/config.prokaryotic-isolate.yaml
+          snakemake-version: 9.19.0
+
+  python-tests:
+    name: Python tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: |
+            tests/requirements.txt
+            tests/requirements-workflow.txt
+      - name: Install test dependencies
+        run: python -m pip install -r tests/requirements-workflow.txt
+      - name: Run Python tests
+        run: python -m pytest -q -ra tests
+
+  testing:
+    name: Testing (${{ matrix.route.name }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [formatting, linting, python-tests]
+    strategy:
+      fail-fast: false
+      matrix:
+        route:
+          - name: prokaryotic isolate
+            id: prokaryotic-isolate
+            config: .test/config/config.prokaryotic-isolate.yaml
+          - name: eukaryotic isolate
+            id: eukaryotic-isolate
+            config: .test/config/config.eukaryotic-isolate.yaml
+          - name: mixed prokaryotic/eukaryotic metagenome
+            id: mixed-metagenome
+            config: .test/config/config.mixed-metagenome.yaml
+    steps:
+      - uses: actions/checkout@v6
+      - name: Dry-run workflow
+        uses: snakemake/snakemake-github-action@v2
+        with:
+          directory: .test
+          snakefile: workflow/Snakefile
+          args: >-
+            --configfile ${{ matrix.route.config }}
+            --dry-run --printshellcmds --cores 2
+          snakemake-version: 9.19.0

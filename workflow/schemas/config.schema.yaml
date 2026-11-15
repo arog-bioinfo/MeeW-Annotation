@@ -1,0 +1,393 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+type: object
+description: main configuration schema for the workflow
+properties:
+  resources_root:
+    type: string
+    default: ""
+    description: Optional shared root for Annotation database/reference defaults; explicit tool paths take precedence, while blank preserves tool environment variables, MEEW_RESOURCES, XDG_DATA_HOME/meew, and ~/resources. Environment variables and ~ are expanded and relative paths use the Snakemake working directory.
+
+  input:
+    type: object
+    description: one explicit Annotation input mode and its one-record TSV
+    properties:
+      mode:
+        type: string
+        enum: [isolate, metagenome]
+      sample_sheet:
+        type: string
+        minLength: 1
+        pattern: "\\S"
+        description: path to the selected one-record samplesheet; environment variables and ~ are expanded and relative paths use the Snakemake working directory
+    required: [mode, sample_sheet]
+    additionalProperties: false
+
+  qa_filter:
+    type: object
+    description: CheckM2/EukCC threshold decisions produced by Annotation for MAGs; must be disabled when qa.enabled is false
+    properties:
+      enabled:
+        type: boolean
+        description: apply threshold filtering to MAGs before annotation; isolates remain in report only routing
+        default: true
+      min_completeness:
+        type: number
+        description: minimum completeness required to keep a sample
+        default: 50.0
+      max_contamination:
+        type: number
+        description: maximum contamination allowed to keep a sample
+        default: 10.0
+    additionalProperties: false
+
+  qa:
+    type: object
+    description: genome quality assessment produced by Annotation
+    properties:
+      enabled:
+        type: boolean
+        description: run genome QA and produce native QA reports; false requires qa_filter.enabled to also be false
+        default: true
+      prok_tools:
+        type: array
+        minItems: 1
+        maxItems: 1
+        uniqueItems: true
+        items:
+          const: checkm2
+      euk_tools:
+        type: array
+        minItems: 1
+        maxItems: 1
+        uniqueItems: true
+        items:
+          const: eukcc
+      threads:
+        type: integer
+        minimum: 1
+        default: 8
+      checkm2:
+        type: object
+        properties:
+          database_path:
+            type: string
+            description: Optional explicit CheckM2 path; otherwise nonblank resources_root, CHECKM2DB, and ambient MeeW resource roots are checked in that order.
+          download_database:
+            type: boolean
+            default: false
+          extension:
+            type: string
+            enum: [.fa, .fna, .fasta]
+          extra:
+            type: string
+        required: [database_path, download_database, extension, extra]
+        additionalProperties: false
+      eukcc:
+        type: object
+        properties:
+          database_path:
+            type: string
+            description: Optional explicit EukCC path; otherwise nonblank resources_root, EUKCC2_DB/EUKCC_DB, and ambient MeeW resource roots are checked in that order.
+          download_database:
+            type: boolean
+            default: false
+          extra:
+            type: string
+        required: [database_path, download_database, extra]
+        additionalProperties: false
+    required: [prok_tools, euk_tools, threads, checkm2, eukcc]
+    additionalProperties: false
+
+  bakta:
+    type: object
+    description: parameters for Bakta annotation and database selection
+    properties:
+      type:
+        type: string
+        enum: [full, light]
+        default: full
+        description: Bakta database type checked/prepared by the adapter; omission uses full
+      db:
+        type: string
+        description: optional explicit Bakta database directory; otherwise nonblank resources_root, BAKTA_DB, and the type-specific ambient MeeW resource-root location are checked in that order
+      extra:
+        type: string
+        description: extra CLI options passed to Bakta; the native annotation prefix (--prefix/-p), --meta, output directory (--output/-o), and force overwrite (--force/-f) are managed by MeeW and rejected in all CLI forms
+    required:
+      - db
+    additionalProperties: false
+
+  gtdbtk:
+    type: object
+    description: parameters for optional GTDB-Tk classification with adapter-owned persistent R232 cache preparation
+    properties:
+      enabled:
+        type: boolean
+        description: enable one optional GTDB-Tk batch for an eligible prokaryotic isolate or all QA-passing prokaryotic MAGs in the project; no batch or classification artifact is created when a metagenome has no passing prokaryotic MAG
+        default: false
+      data_dir:
+        type: string
+        description: optional explicit GTDB-Tk R232 root; otherwise nonblank resources_root, GTDBTK_DATA_PATH, and ambient MeeW resource roots are checked in that order; a requested route reuses a validated cache or safely prepares a wholly absent root
+      extra:
+        type: string
+        description: extra CLI options passed to GTDB-Tk wrapper
+    allOf:
+      - if:
+          required:
+            - enabled
+          properties:
+            enabled:
+              const: true
+        then:
+          required:
+            - data_dir
+    additionalProperties: false
+
+  metaeuk:
+    type: object
+    description: parameters for MetaEuk gene prediction against a selected persistent MMseqs2 catalog cache
+    properties:
+      database:
+        type: string
+        default: UniRef90
+        description: free-form MMseqs2 catalog name passed as one databases argument; omission or blank uses UniRef90 and surrounding whitespace is trimmed
+      db:
+        type: string
+        description: optional explicit local MMseqs2 database prefix; blank derives catalogs/<encoded-selection>/db in cache_dir while complete legacy flat prefixes remain reusable
+      cache_dir:
+        type: string
+        description: explicit persistent managed catalog root; otherwise nonblank resources_root, METAEUK_DB, and ambient MeeW resource roots are checked in that order
+      max_exon_sets:
+        type: integer
+        minimum: 1
+        default: 1
+        description: workflow-managed MetaEuk --max-exon-sets value
+      extra:
+        type: string
+        description: extra CLI options; --threads, --max-exon-sets, and --exhaustive-search are rejected because they are workflow-managed or intentionally disabled
+    required:
+      - db
+      - cache_dir
+      - max_exon_sets
+      - extra
+    additionalProperties: false
+
+  recognizer_prok:
+    type: object
+    description: parameters for prokaryotic reCOGnizer domain annotation
+    properties:
+      resources_dir:
+        type: string
+        description: optional explicit prokaryotic reCOGnizer database directory; otherwise nonblank resources_root, RECOGNIZER_RESOURCES, and ambient MeeW resource roots are checked in that order
+      extra:
+        type: string
+        description: extra CLI options passed to prokaryotic reCOGnizer; input, atomic output directory, threads, resources directory, standard seven built-in databases, custom-database mode, and --keep-intermediates are workflow-managed and rejected in every argparse-accepted form
+    required:
+      - resources_dir
+    additionalProperties: false
+
+  recognizer_euk:
+    type: object
+    description: parameters for eukaryotic reCOGnizer domain annotation
+    properties:
+      resources_dir:
+        type: string
+        description: optional explicit eukaryotic reCOGnizer database directory; otherwise nonblank resources_root, RECOGNIZER_RESOURCES, and ambient MeeW resource roots are checked in that order
+      extra:
+        type: string
+        description: extra CLI options passed to eukaryotic reCOGnizer; input, atomic output directory, threads, resources directory, built-in KOG selection, custom-database mode, and --keep-intermediates are workflow-managed and rejected in every argparse-accepted form
+    required:
+      - resources_dir
+    additionalProperties: false
+
+  funannotate2:
+    type: object
+    description: parameters for Funannotate2 eukaryotic isolate annotation
+    properties:
+      db_dir:
+        type: string
+        description: optional explicit Funannotate2 database directory; otherwise nonblank resources_root, FUNANNOTATE2_DB, and ambient MeeW resource roots are checked in that order
+      databases:
+        type: array
+        description: unique requested native records; the adapter reuses ready entries and passes wholly absent entries to upstream funannotate2 install in isolated staging
+        minItems: 1
+        uniqueItems: true
+        items:
+          type: string
+          enum:
+            [
+              all,
+              merops,
+              uniprot,
+              dbCAN,
+              pfam,
+              go,
+              mibig,
+              interpro,
+              gene2product,
+              mito,
+            ]
+        default:
+          - all
+      busco_lineage:
+        type: string
+        description: explicit Funannotate2 26.6.21 BUSCO lineage used by train and annotate; lineage acquisition remains Funannotate2-owned
+        minLength: 1
+        pattern: ^[A-Za-z0-9._-]+$
+        default: eukaryota
+      clean:
+        type: boolean
+        description: run optional Funannotate2 clean before model acquisition, prediction, and annotation
+        default: false
+      species:
+        type:
+          - string
+          - "null"
+        description: species name; selects genome-specific training with no reusable model, is mandatory with pretrained, and must agree with params JSON when also provided
+      strain:
+        type:
+          - string
+          - "null"
+        description: strain name passed to Funannotate2 when provided
+      params:
+        type:
+          - string
+          - "null"
+        description: reusable Funannotate2 params JSON; species is derived from its species field and training is skipped
+      pretrained:
+        type:
+          - string
+          - "null"
+        description: pretrained Funannotate2 model slug; requires configured species and skips training
+      extra_clean:
+        type:
+          - string
+          - "null"
+        description: extra CLI options passed to Funannotate2 clean
+      extra_train:
+        type:
+          - string
+          - "null"
+        description: extra CLI options passed to Funannotate2 train
+      extra_predict:
+        type:
+          - string
+          - "null"
+        description: extra CLI options passed to Funannotate2 predict
+      extra_annotate:
+        type:
+          - string
+          - "null"
+        description: extra CLI options passed to Funannotate2 annotate
+    required:
+      - db_dir
+      - databases
+      - busco_lineage
+      - clean
+    allOf:
+      - not:
+          required: [params, pretrained]
+          properties:
+            params:
+              type: string
+              minLength: 1
+            pretrained:
+              type: string
+              minLength: 1
+      - if:
+          required: [pretrained]
+          properties:
+            pretrained:
+              type: string
+              minLength: 1
+        then:
+          required: [species]
+          properties:
+            species:
+              type: string
+              minLength: 1
+              pattern: "\\S"
+    additionalProperties: false
+
+  upimapi:
+    type: object
+    description: parameters for UPIMAPI functional annotation
+    properties:
+      db:
+        type: string
+        enum: [uniprot, swissprot, taxids, ""]
+        default: uniprot
+        description: UPIMAPI built-in database name; uniprot is the default full UniProtKB reference (Swiss-Prot plus TrEMBL), while swissprot and taxids remain explicit choices and an empty value selects db_custom
+      db_custom:
+        type: string
+        description: path to a custom UPIMAPI database FASTA; leave empty when using db
+      resources_dir:
+        type: string
+        description: optional explicit UPIMAPI resources database directory; otherwise nonblank resources_root, UPIMAPI_RESOURCES, and ambient MeeW resource roots are checked in that order
+      extra:
+        type: string
+        description: extra CLI options passed to UPIMAPI; managed input, atomic output directory, output table, resources, database, threads, one-target setting, core annotation/ID-mapping behavior, and wrapper-managed --skip-db-check are rejected in every argparse-accepted form
+      skip_db_check_if_exists:
+        type: boolean
+        description: automatically pass --skip-db-check when the selected UPIMAPI database FASTA already exists in the configured resources directory
+        default: true
+    required: [db, db_custom, resources_dir, extra, skip_db_check_if_exists]
+    allOf:
+      - if:
+          properties:
+            db_custom:
+              minLength: 1
+        then:
+          properties:
+            db:
+              const: ""
+      - if:
+          properties:
+            db:
+              minLength: 1
+        then:
+          properties:
+            db_custom:
+              const: ""
+    additionalProperties: false
+
+  threads:
+    type: object
+    description: computational resources presets
+    properties:
+      high:
+        type: integer
+      medium:
+        type: integer
+      low:
+        type: integer
+    additionalProperties: false
+
+allOf:
+  - if:
+      properties:
+        qa:
+          required: [enabled]
+          properties:
+            enabled:
+              const: false
+    then:
+      properties:
+        qa_filter:
+          required: [enabled]
+          properties:
+            enabled:
+              const: false
+
+required:
+  - input
+  - qa
+  - qa_filter
+  - bakta
+  - metaeuk
+  - recognizer_prok
+  - recognizer_euk
+  - funannotate2
+  - upimapi
+  - threads
+additionalProperties: false
